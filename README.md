@@ -2,7 +2,7 @@
 
 一个可以输入账号、密码即可获取云麦好轻数据的脚本。
 
-# 使用方法
+# 步骤
 
 1. clone本项目到本地，并在当前路径下运行终端
 2. 运行以下代码获取体重数据：
@@ -43,3 +43,11 @@ on:
 3. 在 repo Settings > Security > Secrets > secrets and variables > Actions  > New repository secret > 增加:
    name填写为：account，Secret填写为：“你的手机号/密码/自定义的昵称”（不需要双引号），如 `186XXXXX123/12xxx4/nickname1`
    ![img](/img/添加变量.png)
+
+# 使用方法
+
+1、成功获取体重的json文件后建议通过CDN加速一下，
+格式为：`https://cdn.jsdelivr.net/gh/你的账号名/你的仓库名@分支名称/文件名称`
+如本仓库json链接：`https://cdn.jsdelivr.net/gh/arthurfsy2/yunmai_weight_extract2json@master/weight_fsy.json`
+上述的json文件为直链，可以通过python或javascript直接http的get请求获取
+2、可通过echarts表格引入该json文件画出图表。详见：[获取云麦好轻体重数据并在vuepress上通过echarts折线图展示](https://blog.4a1801.life/%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/IT%E6%80%BB%E7%BB%93/%E8%8E%B7%E5%8F%96%E4%BA%91%E9%BA%A6%E5%A5%BD%E8%BD%BB%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%9C%A8vuepress%E4%B8%8A%E5%B1%95%E7%A4%BA.html)
