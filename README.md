@@ -45,9 +45,15 @@ on:
    ![img](/img/添加变量.png)
 
 # 使用方法
-
-1、成功获取体重的json文件后建议通过CDN加速一下，
-格式为：`https://cdn.jsdelivr.net/gh/你的账号名/你的仓库名@分支名称/文件名称`
+## 1.CDN
+1、成功获取体重的json文件,r如果希望国内网络流畅访问，且对数据更新没那么敏感的话，可考虑通过CDN加速一下，
+### 推荐1.jsdelivr
+* 格式为：`https://cdn.jsdelivr.net/gh/你的账号名/你的仓库名@分支名称/文件名称`
 如本仓库json链接：`https://cdn.jsdelivr.net/gh/arthurfsy2/yunmai_weight_extract2json@master/weight_fsy.json`
-上述的json文件为直链，可以通过python或javascript直接http的get请求获取
-2、可通过echarts表格引入该json文件画出图表。详见：[获取云麦好轻体重数据并在vuepress上通过echarts折线图展示](https://blog.4a1801.life/%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/IT%E6%80%BB%E7%BB%93/%E8%8E%B7%E5%8F%96%E4%BA%91%E9%BA%A6%E5%A5%BD%E8%BD%BB%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%9C%A8vuepress%E4%B8%8A%E5%B1%95%E7%A4%BA.html)
+### 推荐2.gitmirror
+可直接将`raw.githubusercontent.com/XXX`换成`raw.gitmirror.com/XXX`，即可实现免费CDN
+
+上述2种方法获取的json文件为直链，可以通过python或javascript直接http的get请求，直接获取到数据
+
+## 2、可通过echarts表格引入该json文件画出图表。
+详见：[获取云麦好轻体重数据并在vuepress上通过echarts折线图展示](https://blog.4a1801.life/%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/IT%E6%80%BB%E7%BB%93/%E8%8E%B7%E5%8F%96%E4%BA%91%E9%BA%A6%E5%A5%BD%E8%BD%BB%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%9C%A8vuepress%E4%B8%8A%E5%B1%95%E7%A4%BA.html)
