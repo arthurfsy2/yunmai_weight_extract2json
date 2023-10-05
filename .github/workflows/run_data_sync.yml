@@ -3,7 +3,7 @@ name: Run Data Sync
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '30 1 * * *'
   push:
     branches:
       - main
@@ -36,10 +36,15 @@ jobs:
         run: |
           python multiGetWeight.py ${{ secrets.ACCOUNT }} 
           
+      - name: 检查文件更新
+        id: check_changes
+        run: |
+          git diff --quiet || echo "::set-output name=changes::true"
+
       - name: 提交
         run: |
           git config --local user.email "${{ env.GITHUB_EMAIL }}"
           git config --local user.name "${{ env.GITHUB_NAME }}"
           git add .
           git commit -m "Move weight.json to root directory"
-          git push
+          if [[ "${{ steps.check_changes.outputs.changes }}" == "true" ]]; then git push; else echo "No changes to push."; fi
