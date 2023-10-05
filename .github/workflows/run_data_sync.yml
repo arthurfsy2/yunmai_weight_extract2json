@@ -46,5 +46,5 @@ jobs:
           git config --local user.email "${{ env.GITHUB_EMAIL }}"
           git config --local user.name "${{ env.GITHUB_NAME }}"
           git add .
-          git commit -m "Move weight.json to root directory"
+          git diff --cached --quiet || git commit -m "Move weight.json to root directory"
           if [[ "${{ steps.check_changes.outputs.changes }}" == "true" ]]; then git push; else echo "No changes to push."; fi
