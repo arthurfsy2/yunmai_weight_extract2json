@@ -86,10 +86,10 @@ getAccesstoken_stat = getAccesstoken_result['result']['msg']
 
 
 if getAccesstoken_result['result']['code'] ==0:
-    print(f"Access_token获取结果: {getAccesstoken_stat}\n\n")
+    print(f"Access_token获取结果: {getAccesstoken_stat}")
     accessToken = getAccesstoken_result['data']['accessToken']
 else:
-    print(f"Access_token获取结果: {getAccesstoken_stat}\n\n")
+    print(f"Access_token获取结果: {getAccesstoken_stat}")
     sys.exit()
 
 timestamp = str(int(time.time()))
@@ -127,7 +127,7 @@ def getWeight_request(url, headers,payload):
 #获取体重数据并保存结果
 getWeight_stat = getWeight_request(data_url, data_headers,payload)
 weight_data = getWeight_stat['data']['rows']
-json_data = json.dumps(weight_data)
+json_data = json.dumps(weight_data,indent=2)
 
 #print(f"weight_data: {weight_data}\n\n")
 

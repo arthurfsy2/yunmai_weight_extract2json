@@ -131,7 +131,7 @@ if login_result['result']['code'] == 0:
     refreshToken = login_result['data']['userinfo']['refreshToken']
 #print(f"refreshToken: {refreshToken}\n")
 else:
-    print(f"登陆状态: {login_stat}\n")
+    print(f"登陆状态: {login_stat}")
     sys.exit()  #登陆失败后停止执行后续命令
 
 
@@ -149,5 +149,5 @@ arr = {
 
 #保存refreshToken
 with open(f'userinfo_{nickname}.json', 'w',encoding="utf-8") as file:
-    file.write(json.dumps(arr, ensure_ascii=False))
+    file.write(json.dumps(arr, indent=2))
     print(f"userinfo_{nickname}.json写入成功！")
