@@ -36,10 +36,6 @@ jobs:
         run: |
           python getWeightData.py ${{ secrets.ACCOUNT }} 
 
-      - name: 检查文件更新
-        id: check_changes
-        run: |
-          git diff --quiet || echo "changes=true" >> $GITHUB_ENV
 
       - name: 提交
         run: |
@@ -47,9 +43,4 @@ jobs:
           git config --local user.name "${{ env.GITHUB_NAME }}"
           git add .
           git diff --cached --quiet || git commit -m "已更新体重数据"
-          if [[ "${{ steps.check_changes.outputs.changes }}" == "true" ]]; then
-            git push
-          else
-            echo "No changes to push."
-            git reset --hard HEAD  # 取消已经提交的文件变动
-          fi
+          
