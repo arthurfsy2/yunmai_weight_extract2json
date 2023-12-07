@@ -40,15 +40,15 @@ jobs:
       - name: 检查文件更新
         id: check_changes
         run: |
-          git diff --quiet || echo "changes=true" >> $GITHUB_ENV
+          git diff --quiet || echo "changes=true" >> $GITHUB_OUTPUT
       
       - name: 提交
         run: |
           git config --local user.email "${{ env.GITHUB_EMAIL }}"
           git config --local user.name "${{ env.GITHUB_NAME }}"
-          git add *
+          git add .
           git diff --cached --quiet || git commit -m "已更新体重数据"
-          if ${{ env.changes }}; then
+          if [[ "${{ steps.check_changes.outputs.changes }}" == "true" ]]; then
             git push
           else
             echo "No changes to push."
