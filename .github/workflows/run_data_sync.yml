@@ -46,7 +46,7 @@ jobs:
         run: |
           git config --local user.email "${{ env.GITHUB_EMAIL }}"
           git config --local user.name "${{ env.GITHUB_NAME }}"
-          git add .
+          git add *
           git diff --cached --quiet || git commit -m "已更新体重数据"
           if ${{ env.changes }}; then
             git push
