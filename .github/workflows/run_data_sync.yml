@@ -35,12 +35,12 @@ jobs:
       - name: 获取体重数据
         run: |
           python getWeightData.py ${{ secrets.ACCOUNT }} 
-          
+
       - name: 检查文件更新
         id: check_changes
         run: |
-          git diff --quiet || echo "::set-output name=changes::true"
-      
+          git diff --quiet || echo "changes=true" >> $GITHUB_ENV
+
       - name: 提交
         run: |
           git config --local user.email "${{ env.GITHUB_EMAIL }}"
