@@ -9,9 +9,9 @@
 
    需要在后面加入“你的手机号/密码/自定义的昵称”，如果有多组数据，则以逗号隔开
 
-多个举例： `python multiGetWeight.py "186XXXXX123/12xxx4/nickname1,136XXXXX123/12XXX1/nickname2"`
+多个举例： `python getWeightData.py "186XXXXX123/12xxx4/nickname1,136XXXXX123/12XXX1/nickname2"`
 
-单个举例：`python multiGetWeight.py "186XXXXX123/12xxx4/nickname1"`
+单个举例：`python getWeightData.py "186XXXXX123/12xxx4/nickname1"`
 
 如果账号、密码无误的话，即可在当前路径下生成“userinfo_自定义昵称.json”文件，里面包括userId_real、refreshToken、account_b64、password_RSA，以供getWeightData.py使用。当getWeightData.py正常运行后，会生成 `weight_自定义昵称.json`，记录了该账号的体重信息。如果输入了多个账号的信息，则批量生成weight_自定义昵称.json文件
 
@@ -64,8 +64,3 @@ on:
 ## 2、可通过echarts表格引入该json文件画出图表。
 
 详见：[获取云麦好轻体重数据并在vuepress上通过echarts折线图展示](https://blog.4a1801.life/%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/IT%E6%80%BB%E7%BB%93/%E8%8E%B7%E5%8F%96%E4%BA%91%E9%BA%A6%E5%A5%BD%E8%BD%BB%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%9C%A8vuepress%E4%B8%8A%E5%B1%95%E7%A4%BA.html)
-
-# 备注
-本脚本运行时，会产生中间文件"userinfo_{item['nickname']}.json"，保存了账户的login信息以供获取体重时使用。为了保证数据的安全，默认在执行完毕后进行删除。
-如需保留，可以注释掉`multiGetWeight.py`的最后一行
-`deleteUserInfo(result)`

@@ -34,7 +34,7 @@ jobs:
 
       - name: 获取体重数据
         run: |
-          python multiGetWeight.py ${{ secrets.ACCOUNT }} 
+          python getWeightData.py ${{ secrets.ACCOUNT }} 
           
       - name: 检查文件更新
         id: check_changes
