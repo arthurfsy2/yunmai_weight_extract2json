@@ -42,5 +42,6 @@ jobs:
           git config --local user.email "${{ env.GITHUB_EMAIL }}"
           git config --local user.name "${{ env.GITHUB_NAME }}"
           git add .
-          git diff --cached --quiet || git commit -m "已更新体重数据"
+          git commit -m '已更新体重数据' || echo "nothing to commit"
+          git push || echo "nothing to push"
           
