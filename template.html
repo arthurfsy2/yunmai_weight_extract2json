@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>$nickname$的体重</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      #chart-container {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="chart-container"></div>
+    <script src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script>
+      var dom = document.getElementById("chart-container");
+      var myChart = echarts.init(dom, null, {
+        renderer: "canvas",
+        useDirtyRect: false,
+      });
+
+      var option = {
+        tooltip: {
+          trigger: "axis",
+        },
+        grid: {
+          left: "5%",
+          right: "15%",
+          bottom: "10%",
+        },
+        xAxis: [
+          {
+            data: $createTime$,
+          },
+        ],
+        yAxis: [
+          {
+            type: "value",
+            scale: true,
+            name: "体重",
+            position: "left",
+            alignTicks: true,
+            axisLine: {
+              show: true,
+            },
+            axisLabel: {
+              formatter: "{value}kg",
+            },
+          },
+        ],
+        toolbox: {
+          right: 10,
+          feature: {
+            restore: {},
+            saveAsImage: {},
+          },
+        },
+        dataZoom: [
+          {
+            start: 80,
+          },
+          {
+            type: "inside",
+          },
+        ],
+        visualMap: [
+          {
+            seriesIndex: 0,
+            top: 50,
+            right: 10,
+
+            pieces: [$pieces$],
+            outOfRange: {
+              color: "#999",
+            },
+          },
+        ],
+        series: [
+          {
+            name: "$nickname$体重",
+            type: "line",
+            xAxisIndex: 0,
+            yAxisIndex: 0,
+            symbol: "none",
+            smooth: true,
+            data: $weight$,
+
+            markLine: {
+              silent: false,
+              lineStyle: {
+                color: "#333",
+              },
+              data: [
+                {
+                  yAxis: $average$,
+                },
+              ],
+            },
+          },
+        ],
+      };
+
+      if (option && typeof option === "object") {
+        myChart.setOption(option);
+      }
+
+      window.addEventListener("resize", myChart.resize);
+
+      // 在 DOM 加载完成后执行 initChart 函数
+      document.addEventListener("DOMContentLoaded", initChart);
+    </script>
+  </body>
+</html>

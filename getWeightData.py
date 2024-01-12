@@ -10,11 +10,13 @@ import argparse
 import sys
 
 parser = argparse.ArgumentParser()
-parser.add_argument("input_string", help="输入:'用户名/密码/昵称'")        
+parser.add_argument("input_string", help="输入:'用户名/密码/昵称'")
 options = parser.parse_args()
 input_string = options.input_string
 
-#对原始密码进行加密
+# 对原始密码进行加密
+
+
 def encrypt_account_password(account, password):
     # 账号加密
     account_b64 = base64.b64encode(account.encode()).decode()
@@ -33,29 +35,33 @@ def encrypt_account_password(account, password):
 
     return account_b64, account_URI, password_RSA, password_URI
 
-#构建loginSign
+# 构建loginSign
+
+
 def construct_loginsign(account_b64, password_RSA, deviceUUID, userId):
     timestamp = str(int(time.time()))
     code = timestamp[:8] + "00"
-    
+
     userName = account_b64
     password = password_RSA
 
-
-    loginsign = "code=" + code + "&deviceUUID=" + deviceUUID + "&loginType=1&password=" + password + "\n&signVersion=3&userId=" + userId + "&userName=" + userName + "\n&versionCode=7&secret=AUMtyBDV3vklBr6wtA2putAMwtmVcD5b"
-
+    loginsign = "code=" + code + "&deviceUUID=" + deviceUUID + "&loginType=1&password=" + password + \
+        "\n&signVersion=3&userId=" + userId + "&userName=" + userName + \
+        "\n&versionCode=7&secret=AUMtyBDV3vklBr6wtA2putAMwtmVcD5b"
 
     return loginsign
 
 
-#对loginsign进行md5加密
+# 对loginsign进行md5加密
 def md5(loginsign):
     md5 = hashlib.md5()
     md5.update(loginsign.encode('utf-8'))
     encrypted_string = md5.hexdigest()
     return encrypted_string
 
-#构建login请求头data:payload
+# 构建login请求头data:payload
+
+
 def construct_login_payload(password_URI, account_URI, deviceUUID, userId, loginsign):
     timestamp = str(int(time.time()))
     code = timestamp[:8] + "00"
@@ -69,59 +75,66 @@ def construct_login_payload(password_URI, account_URI, deviceUUID, userId, login
     )
     return payload
 
-#构建tokenSign
+# 构建tokenSign
+
+
 def construct_token_payload(refreshToken):
     timestamp = str(int(time.time()))
     code = timestamp[:8] + "00"
-    tokensign = "code=" + code + "&refreshToken=" + refreshToken + "&signVersion=3&versionCode=2&secret=AUMtyBDV3vklBr6wtA2putAMwtmVcD5b"
+    tokensign = "code=" + code + "&refreshToken=" + refreshToken + \
+        "&signVersion=3&versionCode=2&secret=AUMtyBDV3vklBr6wtA2putAMwtmVcD5b"
     timestamp = str(int(time.time()))
     code = timestamp[:8] + "00"
     payload = (
-        
-        "code=" + code + "&refreshToken=" + refreshToken + "&sign="+md5(tokensign)+"&signVersion=3&versionCode=2"
+
+        "code=" + code + "&refreshToken=" + refreshToken +
+        "&sign="+md5(tokensign)+"&signVersion=3&versionCode=2"
     )
     return payload
 
-#构建token.d请求参数
-def get_accesstoken_request(url, headers,payload):
-    
+# 构建token.d请求参数
+
+
+def get_accesstoken_request(url, headers, payload):
+
     response = requests.post(url, headers=headers, data=payload)
     json_data = response.json()
     return json_data
 
 
+# 构建chart-list.json获取重量数据请求参数
+def get_Weight_request(url, headers, payload):
 
-
-#构建chart-list.json获取重量数据请求参数
-def get_Weight_request(url, headers,payload):
-    
     response = requests.get(url, headers=headers, data=payload)
     json_data = response.json()
     json_data = json_data
     return json_data
 
-def get_refresh_token(account_b64, account_URI, password_RSA, password_URI,nickname):
+
+def get_refresh_token(account_b64, account_URI, password_RSA, password_URI, nickname):
     url = "https://account.iyunmai.com/api/android//user/login.d"
     headers = {
         'Host': 'account.iyunmai.com',
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept-Encoding': 'gzip',
-        'Connection':'keep-alive',
+        'Connection': 'keep-alive',
         'Accept': '*/*',
         'User-Agent': 'google/android(10,29) channel(huawei) app(4.25,42500010)screen(w,h=1080,1794)/scale',
         'IssignV1': 'open',
         'Accept-Language': 'zh-Hans-CN;q=1, en-CN;q=0.9',
     }
-    #首次登陆，使用虚拟deviceUUID、userId
+    # 首次登陆，使用虚拟deviceUUID、userId
     deviceUUID = "abcd"
     userId = "199999999"
-    
+
     # 1. 构建loginSign
     timestamp = str(int(time.time()))
     code = timestamp[:8] + "00"
     userName = account_b64
     password = password_RSA
-    loginsign = "code=" + code + "&deviceUUID=" + deviceUUID + "&loginType=1&password=" + password + "\n&signVersion=3&userId=" + userId + "&userName=" + userName + "\n&versionCode=7&secret=AUMtyBDV3vklBr6wtA2putAMwtmVcD5b"
+    loginsign = "code=" + code + "&deviceUUID=" + deviceUUID + "&loginType=1&password=" + password + \
+        "\n&signVersion=3&userId=" + userId + "&userName=" + userName + \
+        "\n&versionCode=7&secret=AUMtyBDV3vklBr6wtA2putAMwtmVcD5b"
 
     # 2. 构建login请求头data:payload
     timestamp = str(int(time.time()))
@@ -138,57 +151,61 @@ def get_refresh_token(account_b64, account_URI, password_RSA, password_URI,nickn
     # 3. 解析登陆结果，获取refreshToken、userId_real
     response = requests.post(url, headers=headers, data=payload)
     login_result = response.json()
-    login_stat= login_result['result']['msg']
-    print("————————————————————")  
-    if login_result['result']['code'] == 0:   
+    login_stat = login_result['result']['msg']
+    print("————————————————————")
+    if login_result['result']['code'] == 0:
         print(f"{nickname}登陆状态: {login_stat}")
-        userId_real= login_result['data']['userinfo']['userId']
-        realName= login_result['data']['userinfo']['realName']
+        userId_real = login_result['data']['userinfo']['userId']
+        realName = login_result['data']['userinfo']['realName']
         refreshToken = login_result['data']['userinfo']['refreshToken']
     else:
         print(f"登陆状态: {login_stat}")
         print(f"获取数据失败，已退出")
         sys.exit()
-    return refreshToken,userId_real
+    return refreshToken, userId_real
+
 
 def get_access_token(payload):
     token_url = "https://account.iyunmai.com/api/android///auth/token.d"
     token_headers = {
-    'Host': 'account.iyunmai.com',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Accept-Encoding': 'gzip',
-    'Connection':'keep-alive',
-    'Accept': '*/*',
-    'User-Agent': 'google/android(10,29) channel(huawei) app(4.25,42500010)screen(w,h=1080,1794)/scale',
-    'IssignV1': 'open',
-    'Accept-Language': 'zh-Hans-CN;q=1, en-CN;q=0.9',
+        'Host': 'account.iyunmai.com',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept-Encoding': 'gzip',
+        'Connection': 'keep-alive',
+        'Accept': '*/*',
+        'User-Agent': 'google/android(10,29) channel(huawei) app(4.25,42500010)screen(w,h=1080,1794)/scale',
+        'IssignV1': 'open',
+        'Accept-Language': 'zh-Hans-CN;q=1, en-CN;q=0.9',
     }
-    #获取Access_token数据并保存结果
-    getAccesstoken_result = get_accesstoken_request(token_url, token_headers,payload)
-    #print(getAccesstoken_result)
+    # 获取Access_token数据并保存结果
+    getAccesstoken_result = get_accesstoken_request(
+        token_url, token_headers, payload)
+    # print(getAccesstoken_result)
     getAccesstoken_stat = getAccesstoken_result['result']['msg']
 
     # 获取accessToken
-    if getAccesstoken_result['result']['code'] ==0:
+    if getAccesstoken_result['result']['code'] == 0:
         print(f"Access_token获取结果: {getAccesstoken_stat}")
         accessToken = getAccesstoken_result['data']['accessToken']
     else:
         print(f"Access_token获取结果: {getAccesstoken_stat}")
         accessToken = None
 
-    #print("accessToken",accessToken)
+    # print("accessToken",accessToken)
     return accessToken
 
-def getUserData(accessToken,payload,userId_real,nickname):
+
+def getUserData(accessToken, payload, userId_real, nickname, height):
     code = str(int(time.time()))
-    startTime = str(int(time.time()) - 9999 * 24 * 60 * 60) #取当前时间前9999天为需要截取的时间段
+    startTime = str(int(time.time()) - 9999 * 24 *
+                    60 * 60)  # 取当前时间前9999天为需要截取的时间段
     data_url = f"https://data.iyunmai.com/api/ios/scale/chart-list.json?code={code}&signVersion=3&startTime={startTime}&userId={userId_real}&versionCode=2"
     # 1. 构建chart-list.json请求头
     data_headers = {
         'Host': 'account.iyunmai.com',
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept-Encoding': 'gzip',
-        'Connection':'keep-alive',
+        'Connection': 'keep-alive',
         'Accept': '*/*',
         'User-Agent': 'google/android(10,29) channel(huawei) app(4.25,42500010)screen(w,h=1080,1794)/scale',
         'accessToken': accessToken,
@@ -200,40 +217,108 @@ def getUserData(accessToken,payload,userId_real,nickname):
     getWeight_stat = response.json()
     # 3. 解析体重数据并保存
     weight_data = getWeight_stat['data']['rows']
-    json_data = json.dumps(weight_data,indent=2)
-    #print(f"weight_data: {weight_data}\n\n")
-    with open(f'weight_{nickname}.json', 'w',encoding="utf-8") as f:
-        #json_data = black.format_str(json_data, mode=black.FileMode())
+    json_data = json.dumps(weight_data, indent=2)
+    # print(f"weight_data: {weight_data}\n\n")
+    with open(f'weight_{nickname}.json', 'w', encoding="utf-8") as f:
+        # json_data = black.format_str(json_data, mode=black.FileMode())
         f.write(json_data)
         print(f"weight_{nickname}.json写入成功！")
         print("————————————————————")
+    weight = json.dumps([item['weight'] for item in weight_data])
+    createTime = json.dumps([item['createTime']
+                            for item in weight_data])  # 将列表转换为 JSON 格式的字符串
 
-def getUserInfo(account, password,nickname):
+    def get_avg(arr):
+        avg = sum(arr) / len(arr)
+        return round(avg, 2)
+
+    # 调用函数并传入数组 a
+    # 假设你已经计算了平均值并四舍五入到两位小数
+    average = str(round(get_avg([item['weight'] for item in weight_data]), 2))
+    pieces = get_BMI_status(height)
+    with open(f'./template.html', 'r', encoding="utf-8") as f:
+        data = f.read()
+        dataNew = data.replace("$weight$", weight).replace(
+            "$createTime$", createTime).replace(
+            "$nickname$", nickname).replace(
+            "$average$", average).replace(
+            "$pieces$", pieces)
+    with open(f'./static/{nickname}_weight.html', 'w', encoding="utf-8") as f:
+        f.write(dataNew)
+
+
+def getUserInfo(account, password, nickname, height):
     # 1. 加密账号密码
-    account_b64, account_URI, password_RSA, password_URI = encrypt_account_password(account, password)
+    account_b64, account_URI, password_RSA, password_URI = encrypt_account_password(
+        account, password)
     # 2. 获取refreshToken
-    refreshToken,userId_real = get_refresh_token(account_b64, account_URI, password_RSA, password_URI,nickname)
+    refreshToken, userId_real = get_refresh_token(
+        account_b64, account_URI, password_RSA, password_URI, nickname)
     payload = construct_token_payload(refreshToken)
     # 3. accessToken
     accessToken = get_access_token(payload)
     # 4. 获取体重数据
-    getUserData(accessToken,payload,userId_real,nickname)
+    getUserData(accessToken, payload, userId_real, nickname, height)
 
+
+def get_BMI_status(h):
+    s1 = 18.5
+    s2 = 24.0
+    s3 = 28.0
+
+    def calscore(s, h):
+        return h*h*s
+    lte_value = round(calscore(s1, h), 2)
+    gt_value = round(calscore(s2, h), 2)
+    lte_value2 = round(calscore(s3, h), 2)
+
+    content = f"""
+        
+            {{
+                "lte": {lte_value},
+                "label": "偏瘦",
+                "color": "grey"
+            }},
+            {{
+                "gt": {lte_value},
+                "lte": {gt_value},
+                "label": "正常",
+                "color": "green"
+            }},
+            {{
+                "gt": {gt_value},
+                "lte": {lte_value2},
+                "label": "偏胖",
+                "color": "orange"
+            }},
+            {{
+                "gt": {lte_value2},
+                "label": "肥胖",
+                "color": "red"
+            }}
+        
+        """
+    return content
 
 
 if __name__ == "__main__":
-    
+
     def parse_string(input_string):
         arr = []
         groups = input_string.split(',')
         for group in groups:
-            account, password,nickname = group.split('/')
+            account, password, nickname, height = group.split('/')
             account = account.strip()
             password = password.strip()
             nickname = nickname.strip()
-            arr.append({'account': account, 'password': password, 'nickname': nickname})
+            height = height.strip()
+            arr.append(
+                {'account': account, 'password': password, 'nickname': nickname, 'height': height})
         return arr
     users = parse_string(input_string)
-    #print(users)
+    # print(users)
     for user in users:
-        getUserInfo(user["account"], user["password"], user["nickname"])
+        getUserInfo(user["account"], user["password"],
+                    user["nickname"], float(user["height"]))
+    content = get_BMI_status(1.8)
+    print(content)
