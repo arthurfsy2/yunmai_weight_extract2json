@@ -10,29 +10,29 @@ app = Flask(__name__, static_folder='static')
 def run_script():
 
     # 获取用户输入的账号、密码和语言选项
-    username = request.form.get('account')
+    account = request.form.get('account')
     password = request.form.get('password')
-    lang = request.form.get('lang')
-
+    nickname = request.form.get('nickname')
+    height = request.form.get('height')
+    cmd = f"{account}/{password}/{nickname}/{height}"
     # 执行Python脚本并捕获输出
-    login_result = subprocess.run(
-        ['python', './login.py', username, password], capture_output=True, text=True)
-    recap_result = subprocess.run(
-        ['python', './postcrossingrecap.py', lang, username], capture_output=True, text=True)
+
+    getWeightData_result = subprocess.run(
+        ['python', './getWeightData.py', cmd], capture_output=True, text=True)
 
     # 将标准输出和标准错误合并
-    output = login_result.stderr + recap_result.stdout
+    output = getWeightData_result.stderr + getWeightData_result.stdout
 
     # 返回响应
     return jsonify(success=True, output=output)
 
 
-@app.route('/list-recap-files', methods=['POST'])
+@app.route('/list-files', methods=['POST'])
 def list_recap_files():
     # 获取用户输入的账号
     username = request.form.get('account')
-    recap_folder = os.path.join(app.static_folder, 'recap')
-    files = os.listdir(recap_folder)
+    folder = os.path.join(app.static_folder, '')
+    files = os.listdir(folder)
     # 筛选出以username开头且以.html结尾的文件
     user_html_files = [f for f in files if f.startswith(
         username) and (f.endswith('.html') or f.endswith('.zip'))]

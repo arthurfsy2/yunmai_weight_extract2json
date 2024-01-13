@@ -195,7 +195,7 @@ def get_access_token(payload):
     return accessToken
 
 
-def getUserData(accessToken, payload, userId_real, nickname, height):
+def getUserData(accessToken, payload, userId_real, acount, nickname, height):
     code = str(int(time.time()))
     startTime = str(int(time.time()) - 9999 * 24 *
                     60 * 60)  # 取当前时间前9999天为需要截取的时间段
@@ -243,8 +243,9 @@ def getUserData(accessToken, payload, userId_real, nickname, height):
             "$nickname$", nickname).replace(
             "$average$", average).replace(
             "$pieces$", pieces)
-    with open(f'./static/{nickname}_weight.html', 'w', encoding="utf-8") as f:
+    with open(f'./static/{acount}_weight.html', 'w', encoding="utf-8") as f:
         f.write(dataNew)
+    print(f'已生成./static/{acount}_weight.html')
 
 
 def getUserInfo(account, password, nickname, height):
@@ -258,7 +259,7 @@ def getUserInfo(account, password, nickname, height):
     # 3. accessToken
     accessToken = get_access_token(payload)
     # 4. 获取体重数据
-    getUserData(accessToken, payload, userId_real, nickname, height)
+    getUserData(accessToken, payload, userId_real, account, nickname, height)
 
 
 def get_BMI_status(h):
@@ -320,5 +321,3 @@ if __name__ == "__main__":
     for user in users:
         getUserInfo(user["account"], user["password"],
                     user["nickname"], float(user["height"]))
-    content = get_BMI_status(1.8)
-    print(content)
