@@ -247,12 +247,13 @@ def getUserData(accessToken, payload, userId_real, acount, nickname, height, isO
             "$nickname$", nickname).replace(
             "$average$", average).replace(
             "$pieces$", pieces)
-    account_weight_path = os.path.join(
-        dir_path, f'./static/{acount}_weight.html')
-    with open(account_weight_path, 'w', encoding="utf-8") as f:
-        f.write(dataNew)
-    print(f'已生成./static/{acount}_weight.html')
+
     if isOnline == 1:
+        account_weight_path = os.path.join(
+            dir_path, f'./static/{acount}_weight.html')
+        with open(account_weight_path, 'w', encoding="utf-8") as f:
+            f.write(dataNew)
+        print(f'已生成./static/{acount}_weight.html')
         print(weight_nicname_path)
         os.remove(weight_nicname_path)
 
