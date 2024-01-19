@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>获取体重信息</title>
+    <link rel="stylesheet" href="./bootstrap.min.css">
+
+    <!-- 引入Bootstrap CSS -->
+    <link rel="stylesheet" href="./bootstrap.min.css">
+    <!-- 引入Font Awesome图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+
+    <style>
+        /* 在这里添加您的CSS样式 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            text-align: center;
+            font-size: 1.5em;
+            margin: 0;
+            margin-top: 1em;
+        }
+
+        h3 {
+            color: #000000;
+            text-shadow: 0px 0px 16px #ffe476;
+        }
+
+        .margin-top-20px {
+            margin-top: 20px;
+        }
+
+        footer {
+            --mask:
+                radial-gradient(22.36px at 50% 30.00px, #000 99%, #0000 101%) calc(50% - 20px) 0/40px 100%,
+                radial-gradient(22.36px at 50% -20px, #0000 99%, #000 101%) 50% 10px/40px 100% repeat-x;
+            -webkit-mask: var(--mask);
+            mask: var(--mask);
+            background-color: #ffe6b1;
+            padding-top: 20px;
+            padding-bottom: 10px;
+            text-align: center;
+            font-size: 0.8em;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .language-switcher .dropdown-menu {
+            min-width: 5rem;
+        }
+    </style>
+
+</head>
+
+<body>
+    <img
+      src="https://img.99danji.com/uploadfile/2022/0705/20220705045433732.png"
+      alt="好轻 logo"
+      style="width: 50"
+    />
+    <div class="container mt-3">
+        <!-- 第一部分：生成数据 -->
+        <h3 id="generate-data-title">生成数据</h3>
+        <form>
+            <div class="form-group mt-3">
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1"><i class="fa fa-user"></i></span>
+                    </div>
+                    <input type="text" class="form-control" id="account" placeholder="请输入好轻账号（手机号）"
+                        aria-describedby="basic-addon1">
+                </div>
+            </div>
+            <div class="form-group mt-3">
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon2"><i class="fa fa-lock"></i></span>
+                    </div>
+                    <input type="password" class="form-control" id="password" placeholder="请输入好轻密码"
+                        aria-describedby="basic-addon2">
+                </div>
+            </div>
+            <div class="form-group mt-3">
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3"><i class="fa fa-ruler-vertical"></i></span>
+                    </div>
+                    <input type="text" class="form-control" id="height" placeholder="请输入身高（米），如：“1.8”，用于BMI范围计算"
+                        aria-describedby="basic-addon3">
+                </div>
+            </div>
+            <div class="form-group mt-3">
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon4"><i class="fa fa-signature"></i></span>
+                    </div>
+                    <input type="text" class="form-control" id="nickname" placeholder="请输入昵称（用于文件生成）"
+                        aria-describedby="basic-addon4">
+                </div>
+            </div>
+
+
+            <button id="run-script" class="btn btn-primary mt-3">获取好轻体重</button>
+        </form>
+        <div id="file-list-container" class="mt-3">
+        </div>
+        <div id="map-container" class="mt-3"></div>
+    </div>
+
+    <hr>
+
+    <h3 id="search-data-title">查询数据</h3>
+    <div class="form-group">
+
+        <div class="col-12 col-md-10 mx-auto"></div>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="search-account" placeholder="请在生成后，再输入手机号进行查询……">
+        </div>
+    </div>
+    <button id="search-files" class="btn btn-primary margin-top-20px">查询</button>
+    <button id="download-files" class="btn btn-success margin-top-20px" style="display: none;"
+        onclick="downloadFile()">下载html</button>
+    <button id="delete-files" class="btn btn-danger margin-top-20px" style="display: none;"
+        onclick="confirmDelete()">删除</button>
+    </div>
+    <div id="search-list-container" class="mt-3"></div>
+    <div id="map-container2" class="mt-3"></div>
+    </div>
+
+
+    <script>
+        document.getElementById('run-script').addEventListener('click', function () {
+            const runScriptButton = document.getElementById('run-script');
+            const account = document.getElementById('account').value.trim();
+            const password = document.getElementById('password').value;
+            const nickname = document.getElementById('nickname').value;
+            const height = document.getElementById('height').value;
+            // 检查搜索框内容是否为空
+            if (account === '' || password === ''|| nickname === ''|| height === '') {
+                alert('请输入完整信息');
+                return; // 如果为空，显示提示并退出函数
+            }
+            // 禁用按钮并更改按钮文本
+            runScriptButton.disabled = true;
+            runScriptButton.textContent = '生成中……';
+
+            fetch('/run-script', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `account=${encodeURIComponent(account)}&password=${encodeURIComponent(password)}&nickname=${encodeURIComponent(nickname)}&height=${encodeURIComponent(height)}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        setTimeout(() => {
+                            fetch('/list-files', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: `account=${encodeURIComponent(account)}`
+                            })
+                                .then(response => response.json())
+                                .then(files => {
+                                    const fileListContainer = document.getElementById('file-list-container');
+                                    const mapContainer = document.getElementById('map-container');
+                                    fileListContainer.innerHTML = ''; // 清空文件列表容器
+                                    mapContainer.innerHTML = ''; // 清空地图容器
+                                    files.forEach(file => {
+                                        const fileLink = document.createElement('a');
+                                        fileLink.href = `/static/${file}`; // 使用相对路径
+                                        fileLink.textContent = file;
+                                        fileLink.target = '_blank'; // 在新窗口中打开
+                                        fileListContainer.appendChild(fileLink);
+                                        fileListContainer.appendChild(document.createElement('br'));
+                                    });
+                                     // 假设 files 数组中的第一个元素是你想要在 iframe 中展示的文件路径
+                                    const filePath = files[0]; // 或者根据你的需求选择合适的文件路径
+
+                                    // 创建 iframe 元素并设置其属性
+                                    const iframe = document.createElement('iframe');
+                                    iframe.src = `/static/${filePath}`; // 设置 iframe 的 src 属性
+                                    iframe.width = '100%'; // 设置 iframe 的宽度
+                                    iframe.height = '600'; // 设置 iframe 的高度
+                                    iframe.frameBorder = '0'; // 可选：移除 iframe 边框
+
+                                    // 将 iframe 添加到 map-container 中
+                                    mapContainer.appendChild(iframe);
+                                    // 恢复按钮状态
+                                    runScriptButton.disabled = false;
+                                    runScriptButton.textContent = '获取好轻体重';
+                                });
+                        });
+                        alert('提示：\n' + data.output);
+                    } else {
+                        alert('提示：\n' + data.output);
+                        // 如果失败，也恢复按钮状态
+                        runScriptButton.disabled = false;
+                        runScriptButton.textContent = '获取好轻体重';
+                    }
+                }).catch(error => {
+                    // 处理网络错误等问题
+                    alert('发生错误：\n' + error);
+                    // 恢复按钮状态
+                    runScriptButton.disabled = false;
+                    runScriptButton.textContent = '获取好轻体重';
+                });
+        });
+
+
+        document.getElementById('search-files').addEventListener('click', function () {
+            const searchAccount = document.getElementById('search-account').value.trim(); // 使用trim()去除两端空白字符
+
+            // 检查搜索框内容是否为空
+            if (searchAccount === '') {
+                alert('请输入账号');
+                return; // 如果为空，显示提示并退出函数
+            }
+
+            // 禁用查询按钮并更改按钮文本
+            const searchButton = document.getElementById('search-files');
+            searchButton.disabled = true;
+            searchButton.textContent = '查询中……';
+
+            // 发送查询请求
+            fetch('/list-files', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `account=${encodeURIComponent(searchAccount)}`
+            })
+                .then(response => response.json())
+                .then(files => {
+                    const searchListContainer = document.getElementById('search-list-container');
+                    searchListContainer.innerHTML = ''; // 清空搜索结果容器
+                    const mapContainer2 = document.getElementById('map-container2');
+                    searchListContainer.innerHTML = ''; // 清空文件列表容器
+                    mapContainer2.innerHTML = ''; // 清空地图容器
+                    // 过滤出完全匹配账号的文件
+                    const matchedFiles = files.filter(file =>
+                        file.startsWith(`${searchAccount}_`) && (file.endsWith('.html'))
+                    );
+
+                    if (matchedFiles.length === 0) {
+                        // 如果没有查询到结果，则显示“无查询结果”
+                        searchListContainer.textContent = '"' + searchAccount + '"账号未查询到体重信息，请生成数据。';
+                    } else {
+                        // 如果有查询到结果，则显示链接
+                        matchedFiles.forEach(file => {
+                            const fileLink = document.createElement('a');
+                            fileLink.href = `/static/${file}`; // 使用相对路径
+                            fileLink.textContent = file;
+                            fileLink.target = '_blank'; // 在新窗口中打开
+                            searchListContainer.appendChild(fileLink);
+                            searchListContainer.appendChild(document.createElement('br'));
+                        });
+                        // 如果有查询到结果，则显示下载按钮
+                        document.getElementById('download-files').style.display = 'inline-block';
+                        document.getElementById('delete-files').style.display = 'inline-block';
+
+                        // 假设 files 数组中的第一个元素是你想要在 iframe 中展示的文件路径
+                    const filePath = files[0]; // 或者根据你的需求选择合适的文件路径
+
+                    // 创建 iframe 元素并设置其属性
+                    const iframe = document.createElement('iframe');
+                    iframe.src = `/static/${searchAccount}_weight.html`; // 设置 iframe 的 src 属性
+                    iframe.width = '100%'; // 设置 iframe 的宽度
+                    iframe.height = '600'; // 设置 iframe 的高度
+                    iframe.frameBorder = '0'; // 可选：移除 iframe 边框
+
+                    // 将 iframe 添加到 map-container 中
+                    mapContainer2.appendChild(iframe);
+                    }
+                    
+                    // 恢复查询按钮状态
+                    searchButton.disabled = false;
+                    searchButton.textContent = '查询';
+                }).catch(error => {
+                    // 处理网络错误等问题
+                    alert('发生错误：\n' + error);
+                    // 恢复查询按钮状态
+                    searchButton.disabled = false;
+                    searchButton.textContent = '查询';
+                });
+        });
+
+
+        function downloadFile() {
+            // 获取输入框中的账号
+            var account = document.getElementById('search-account').value;
+            // 如果账号非空，则拼接文件路径并触发下载
+            if (account) {
+                var filePath = './' + encodeURIComponent(account) + '_weight.html';
+                // 创建一个a标签用于下载
+                var downloadLink = document.createElement('a');
+                downloadLink.href = filePath;
+                downloadLink.download = account + '_weight.html';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            } else {
+                // 如果输入框为空，则可以在这里添加提示用户输入账号的代码
+                alert('请输入账号进行查询');
+            }
+        }
+
+        function confirmDelete() {
+            var account = document.getElementById('search-account').value;
+            if (account) {
+                var confirmResponse = confirm('确定删除所有' + account + '的数据吗？');
+                if (confirmResponse) {
+                    // 用户点击了确定，发送请求到Flask后端进行删除操作
+
+                    fetch('/delete-endpoint', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `account=${encodeURIComponent(account)}`
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // 处理响应数据
+                            console.log(data);
+                            var messageContainer = document.getElementById('message-container');
+                            if (data.success) {
+                                alert('删除成功。' + (data.output || ''));
+                            } else {
+                                alert('删除失败：' + (data.output || ''));
+                            }
+                            location.reload();
+                        })
+                        .catch((error) => {
+                            // 处理请求错误
+                            console.error('Error:', error);
+                            alert('请求错误：' + error);
+                            // 发生错误时也刷新页面
+                            location.reload();
+                        });
+                } else {
+                    // 用户点击了取消，不执行任何操作
+                }
+            } else {
+                alert('请输入账号进行查询');
+            }
+        }
+
+
+    </script>
+    <script src="./bootstrap.min.js"></script>
+    <script src="./bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="./bootstrap.min.js"></script>
+
+    <!-- 在你的HTML文件中添加这个footer部分 -->
+    <footer>
+        <p>🛈本项目与好轻官方无关！且本网站不会存储你的个人账号、密码，只会用于个人数据的生成。</p>
+        <p>如果不再需要，建议生成后删除个人文件。</p>
+        <div class="text-center p-3">
+            由<a class="text-dark fab fa-github" href="https://github.com/arthurfsy2/yunmai_weight_extract2json"
+                target="_blank">arthurfsy2/yunmai_weight_extract2json</a>提供支持
+        </div>
+    </footer>
+</body>
+
+</html>
