@@ -221,11 +221,17 @@ def getUserData(accessToken, payload, userId_real, acount, nickname, height, isO
     weight_data = getWeight_stat['data']['rows']
     json_data = json.dumps(weight_data, indent=2)
     # print(f"weight_data: {weight_data}\n\n")
-    weight_nicname_path = os.path.join(dir_path, f'weight_{nickname}.json')
+
+    if isOnline == 1:
+        weight_nicname_path = os.path.join(
+            dir_path, rf'static/weight_{nickname}.json')
+    else:
+        weight_nicname_path = os.path.join(dir_path, f'weight_{nickname}.json')
+
     with open(weight_nicname_path, 'w', encoding="utf-8") as f:
         # json_data = black.format_str(json_data, mode=black.FileMode())
         f.write(json_data)
-        print(f"weight_{nickname}.json写入成功！")
+        print(f"{weight_nicname_path}写入成功！")
         print("————————————————————")
     weight = json.dumps([item['weight'] for item in weight_data])
     createTime = json.dumps([item['createTime']
