@@ -223,11 +223,13 @@ def getUserData(accessToken, payload, userId_real, acount, nickname, height, isO
     # print(f"weight_data: {weight_data}\n\n")
 
     if isOnline == 1:
-        weight_nicname_path = os.path.join(
-            dir_path, rf'static/weight_{nickname}.json')
+        # weight_nicname_path = os.path.join(
+        #     dir_path, rf'static/weight_{nickname}.json')
+        weight_nicname_path = './static/weight_{nickname}.json'
     else:
-        weight_nicname_path = os.path.join(dir_path, f'weight_{nickname}.json')
-
+        # weight_nicname_path = os.path.join(dir_path, f'weight_{nickname}.json')
+        weight_nicname_path = './weight_{nickname}.json'
+    # with open(weight_nicname_path, 'w', encoding="utf-8") as f:
     with open(weight_nicname_path, 'w', encoding="utf-8") as f:
         # json_data = black.format_str(json_data, mode=black.FileMode())
         f.write(json_data)
@@ -257,7 +259,8 @@ def getUserData(accessToken, payload, userId_real, acount, nickname, height, isO
     if isOnline == 1:
         account_weight_path = os.path.join(
             dir_path, f'./static/{acount}_weight.html')
-        with open(account_weight_path, 'w', encoding="utf-8") as f:
+        # with open(account_weight_path, 'w', encoding="utf-8") as f:
+        with open(f'./static/{acount}_weight.html', 'w', encoding="utf-8") as f:
             f.write(dataNew)
         print(f'已生成./static/{acount}_weight.html')
         print(weight_nicname_path)
