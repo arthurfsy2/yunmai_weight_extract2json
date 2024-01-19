@@ -255,7 +255,8 @@ def getUserData(accessToken, payload, userId_real, acount, nickname, height, isO
             f.write(dataNew)
         print(f'已生成./static/{acount}_weight.html')
         print(weight_nicname_path)
-        os.remove(weight_nicname_path)
+        if weight_nicname_path:
+            os.remove(weight_nicname_path)
 
 
 def getUserInfo(account, password, nickname, height, isOnline):
