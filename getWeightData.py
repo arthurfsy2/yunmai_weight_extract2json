@@ -8,11 +8,13 @@ import requests
 import json
 import argparse
 import sys
+import os
 
-parser = argparse.ArgumentParser()
-parser.add_argument("input_string", help="输入:'用户名/密码/昵称'")
-options = parser.parse_args()
-input_string = options.input_string
+
+# 获取当前文件的绝对路径
+file_path = os.path.abspath(__file__)
+# 获取当前文件所在的目录
+dir_path = os.path.dirname(file_path)
 
 # 对原始密码进行加密
 
@@ -195,7 +197,7 @@ def get_access_token(payload):
     return accessToken
 
 
-def getUserData(accessToken, payload, userId_real, acount, nickname, height):
+def getUserData(accessToken, payload, userId_real, acount, nickname, height, isOnline):
     code = str(int(time.time()))
     startTime = str(int(time.time()) - 9999 * 24 *
                     60 * 60)  # 取当前时间前9999天为需要截取的时间段
@@ -219,7 +221,8 @@ def getUserData(accessToken, payload, userId_real, acount, nickname, height):
     weight_data = getWeight_stat['data']['rows']
     json_data = json.dumps(weight_data, indent=2)
     # print(f"weight_data: {weight_data}\n\n")
-    with open(f'weight_{nickname}.json', 'w', encoding="utf-8") as f:
+    weight_nicname_path = os.path.join(dir_path, f'weight_{nickname}.json')
+    with open(weight_nicname_path, 'w', encoding="utf-8") as f:
         # json_data = black.format_str(json_data, mode=black.FileMode())
         f.write(json_data)
         print(f"weight_{nickname}.json写入成功！")
@@ -236,19 +239,25 @@ def getUserData(accessToken, payload, userId_real, acount, nickname, height):
     # 假设你已经计算了平均值并四舍五入到两位小数
     average = str(round(get_avg([item['weight'] for item in weight_data]), 2))
     pieces = get_BMI_status(height)
-    with open(f'./template.html', 'r', encoding="utf-8") as f:
+    template_path = os.path.join(dir_path, 'template.html')
+    with open(template_path, 'r', encoding="utf-8") as f:
         data = f.read()
         dataNew = data.replace("$weight$", weight).replace(
             "$createTime$", createTime).replace(
             "$nickname$", nickname).replace(
             "$average$", average).replace(
             "$pieces$", pieces)
-    with open(f'./static/{acount}_weight.html', 'w', encoding="utf-8") as f:
+    account_weight_path = os.path.join(
+        dir_path, f'./static/{acount}_weight.html')
+    with open(account_weight_path, 'w', encoding="utf-8") as f:
         f.write(dataNew)
     print(f'已生成./static/{acount}_weight.html')
+    if isOnline == 1:
+        print(weight_nicname_path)
+        os.remove(weight_nicname_path)
 
 
-def getUserInfo(account, password, nickname, height):
+def getUserInfo(account, password, nickname, height, isOnline):
     # 1. 加密账号密码
     account_b64, account_URI, password_RSA, password_URI = encrypt_account_password(
         account, password)
@@ -259,7 +268,8 @@ def getUserInfo(account, password, nickname, height):
     # 3. accessToken
     accessToken = get_access_token(payload)
     # 4. 获取体重数据
-    getUserData(accessToken, payload, userId_real, account, nickname, height)
+    getUserData(accessToken, payload, userId_real,
+                account, nickname, height, isOnline)
 
 
 def get_BMI_status(h):
@@ -302,22 +312,31 @@ def get_BMI_status(h):
     return content
 
 
-if __name__ == "__main__":
+def parse_string(input_string, isOnline):
+    arr = []
+    groups = input_string.split(',')
+    for group in groups:
+        account, password, nickname, height = group.split('/')
+        account = account.strip()
+        password = password.strip()
+        nickname = nickname.strip()
+        height = height.strip()
+        arr.append(
+            {'account': account, 'password': password, 'nickname': nickname, 'height': height})
+    return arr
 
-    def parse_string(input_string):
-        arr = []
-        groups = input_string.split(',')
-        for group in groups:
-            account, password, nickname, height = group.split('/')
-            account = account.strip()
-            password = password.strip()
-            nickname = nickname.strip()
-            height = height.strip()
-            arr.append(
-                {'account': account, 'password': password, 'nickname': nickname, 'height': height})
-        return arr
-    users = parse_string(input_string)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input_string", help="输入:'用户名/密码/昵称'")
+    parser.add_argument(
+        "--isOnline", help="check if created by online", type=int, default=0)
+    options = parser.parse_args()
+    input_string = options.input_string
+    isOnline = options.isOnline
+
+    users = parse_string(input_string, isOnline)
     # print(users)
     for user in users:
         getUserInfo(user["account"], user["password"],
-                    user["nickname"], float(user["height"]))
+                    user["nickname"], float(user["height"]), isOnline)

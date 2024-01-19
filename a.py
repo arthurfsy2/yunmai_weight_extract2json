@@ -23,7 +23,7 @@ def run_script():
 
     # 执行Python脚本并捕获输出
     getWeightData_result = subprocess.run(
-        ['python3', getWeightData_script_path, cmd], capture_output=True, text=True)
+        ['python3', getWeightData_script_path, cmd, '--isOnline', '1'], capture_output=True, text=True)
 
     # 将标准输出和标准错误合并
     output = getWeightData_result.stderr + getWeightData_result.stdout
