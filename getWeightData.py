@@ -221,12 +221,10 @@ def getUserData(accessToken, payload, userId_real, account, nickname, height, is
     weight_data = getWeight_stat['data']['rows']
     json_data = json.dumps(weight_data, indent=2)
     # print(f"weight_data: {weight_data}\n\n")
-    print("isOnline:", isOnline)
     if isOnline == 1:
         weight_nicname_path = f'./static/{account}_weight.json'
     else:
         weight_nicname_path = f'./weight_{nickname}.json'
-    print("weight_nicname_path:", weight_nicname_path)
     with open(weight_nicname_path, 'w', encoding="utf-8") as f:
         f.write(json_data)
         print(f"{weight_nicname_path}写入成功！")
