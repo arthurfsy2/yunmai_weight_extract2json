@@ -130,7 +130,7 @@
     </div>
     <button id="search-files" class="btn btn-primary margin-top-20px">查询</button>
     <button id="download-files" class="btn btn-success margin-top-20px" style="display: none;"
-        onclick="downloadFile()">下载html</button>
+        onclick="downloadFile()">下载文件</button>
     <button id="delete-files" class="btn btn-danger margin-top-20px" style="display: none;"
         onclick="confirmDelete()">删除</button>
     </div>
@@ -304,11 +304,11 @@
             var account = document.getElementById('search-account').value;
             // 如果账号非空，则拼接文件路径并触发下载
             if (account) {
-                var filePath = './' + encodeURIComponent(account) + '_weight.html';
+                var filePath = './' + encodeURIComponent(account) + '_weight.zip';
                 // 创建一个a标签用于下载
                 var downloadLink = document.createElement('a');
                 downloadLink.href = filePath;
-                downloadLink.download = account + '_weight.html';
+                downloadLink.download = account + '_weight.zip';
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
