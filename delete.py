@@ -8,12 +8,12 @@ def removeFile(path, account):
     pattern = os.path.join(path, f"{account}_*")
     # 使用glob找到所有匹配的文件
     files_to_remove = glob.glob(pattern)
-
+    print(f"\n————————————————————\n")
     # 遍历找到的文件列表并删除每个文件
     for file_path in files_to_remove:
         try:
             os.remove(file_path)
-            print(f"Deleted file: {file_path}")
+            print(f"Deleted file: {file_path}\n")
         except OSError as e:
             print(f"Error deleting file {file_path}: {e}")
 

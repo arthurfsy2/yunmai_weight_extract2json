@@ -192,7 +192,7 @@
 
                                     // 创建 iframe 元素并设置其属性
                                     const iframe = document.createElement('iframe');
-                                    iframe.src = `/static/${filePath}`; // 设置 iframe 的 src 属性
+                                    iframe.src = `/static/${account}_weight.html`; // 设置 iframe 的 src 属性
                                     iframe.width = '100%'; // 设置 iframe 的宽度
                                     iframe.height = '600'; // 设置 iframe 的高度
                                     iframe.frameBorder = '0'; // 可选：移除 iframe 边框
@@ -252,7 +252,7 @@
                     mapContainer2.innerHTML = ''; // 清空地图容器
                     // 过滤出完全匹配账号的文件
                     const matchedFiles = files.filter(file =>
-                        file.startsWith(`${searchAccount}_`) && (file.endsWith('.html'))
+                        file.startsWith(`${searchAccount}_`)
                     );
 
                     if (matchedFiles.length === 0) {

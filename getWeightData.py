@@ -8,15 +8,15 @@ import requests
 import json
 import argparse
 import sys
+import zipfile
 import os
+import re
 
 
 # 获取当前文件的绝对路径
 file_path = os.path.abspath(__file__)
 # 获取当前文件所在的目录
 dir_path = os.path.dirname(file_path)
-
-# 对原始密码进行加密
 
 
 def encrypt_account_password(account, password):
@@ -197,7 +197,7 @@ def get_access_token(payload):
     return accessToken
 
 
-def getUserData(accessToken, payload, userId_real, acount, nickname, height, isOnline):
+def getUserData(accessToken, payload, userId_real, account, nickname, height, isOnline):
     code = str(int(time.time()))
     startTime = str(int(time.time()) - 9999 * 24 *
                     60 * 60)  # 取当前时间前9999天为需要截取的时间段
@@ -223,15 +223,10 @@ def getUserData(accessToken, payload, userId_real, acount, nickname, height, isO
     # print(f"weight_data: {weight_data}\n\n")
 
     if isOnline == 1:
-        # weight_nicname_path = os.path.join(
-        #     dir_path, rf'static/weight_{nickname}.json')
-        weight_nicname_path = './static/weight_{nickname}.json'
+        weight_nicname_path = f'./static/{account}_weight.json'
     else:
-        # weight_nicname_path = os.path.join(dir_path, f'weight_{nickname}.json')
-        weight_nicname_path = './weight_{nickname}.json'
-    # with open(weight_nicname_path, 'w', encoding="utf-8") as f:
+        weight_nicname_path = f'./{account}_weight.json'
     with open(weight_nicname_path, 'w', encoding="utf-8") as f:
-        # json_data = black.format_str(json_data, mode=black.FileMode())
         f.write(json_data)
         print(f"{weight_nicname_path}写入成功！")
         print("————————————————————")
@@ -242,9 +237,6 @@ def getUserData(accessToken, payload, userId_real, acount, nickname, height, isO
     def get_avg(arr):
         avg = sum(arr) / len(arr)
         return round(avg, 2)
-
-    # 调用函数并传入数组 a
-    # 假设你已经计算了平均值并四舍五入到两位小数
     average = str(round(get_avg([item['weight'] for item in weight_data]), 2))
     pieces = get_BMI_status(height)
     template_path = os.path.join(dir_path, 'template.html')
@@ -257,15 +249,9 @@ def getUserData(accessToken, payload, userId_real, acount, nickname, height, isO
             "$pieces$", pieces)
 
     if isOnline == 1:
-        account_weight_path = os.path.join(
-            dir_path, f'./static/{acount}_weight.html')
-        # with open(account_weight_path, 'w', encoding="utf-8") as f:
-        with open(f'./static/{acount}_weight.html', 'w', encoding="utf-8") as f:
+        with open(f'./static/{account}_weight.html', 'w', encoding="utf-8") as f:
             f.write(dataNew)
-        print(f'已生成./static/{acount}_weight.html')
-        print(weight_nicname_path)
-        if weight_nicname_path:
-            os.remove(weight_nicname_path)
+        print(f'已生成./static/{account}_weight.html')
 
 
 def getUserInfo(account, password, nickname, height, isOnline):
@@ -298,24 +284,24 @@ def get_BMI_status(h):
         
             {{
                 "lte": {lte_value},
-                "label": "偏瘦",
+                "label": "偏瘦(<{lte_value})",
                 "color": "grey"
             }},
             {{
                 "gt": {lte_value},
                 "lte": {gt_value},
-                "label": "正常",
+                "label": "正常({lte_value}~{gt_value})",
                 "color": "green"
             }},
             {{
                 "gt": {gt_value},
                 "lte": {lte_value2},
-                "label": "偏胖",
+                "label": "偏胖({gt_value}~{lte_value2})",
                 "color": "orange"
             }},
             {{
                 "gt": {lte_value2},
-                "label": "肥胖",
+                "label": "肥胖(>{lte_value2})",
                 "color": "red"
             }}
         
@@ -337,6 +323,25 @@ def parse_string(input_string, isOnline):
     return arr
 
 
+def zipUserFile(account, path):
+    # 创建一个正则表达式模式来匹配以账户名开头并以.html结尾的文件
+    pattern = re.compile(f"^{re.escape(account)}_(?!.*\\.zip$).*")
+    # 创建一个ZIP文件的名称
+    zip_filename = f"{path}/{account}_weight.zip"
+
+    with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        # 使用os.walk遍历目录树
+        for root, dirs, files in os.walk(path):
+            for filename in files:
+                # 检查文件名是否符合模式
+                if pattern.match(filename) or root.endswith('src'):
+                    filepath = os.path.join(root, filename)
+                    # 计算在ZIP文件中的路径
+                    zip_path = os.path.relpath(filepath, start=path)
+                    # 将文件添加到ZIP文件中
+                    zipf.write(filepath, arcname=zip_path)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input_string", help="输入:'用户名/密码/昵称'")
@@ -351,3 +356,5 @@ if __name__ == "__main__":
     for user in users:
         getUserInfo(user["account"], user["password"],
                     user["nickname"], float(user["height"]), isOnline)
+        if isOnline == 1:
+            zipUserFile(user["account"], "./static")

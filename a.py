@@ -40,7 +40,7 @@ def list_recap_files():
     files = os.listdir(folder)
     # 筛选出以username开头且以.html结尾的文件
     user_html_files = [f for f in files if f.startswith(
-        username) and (f.endswith('.html') or f.endswith('.zip'))]
+        username)]
     return jsonify(user_html_files)
 
 # 定义删除文件的路由
