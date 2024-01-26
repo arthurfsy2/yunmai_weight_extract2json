@@ -304,7 +304,7 @@
             var account = document.getElementById('search-account').value;
             // 如果账号非空，则拼接文件路径并触发下载
             if (account) {
-                var filePath = './' + encodeURIComponent(account) + '_weight.zip';
+                var filePath = './result/' + encodeURIComponent(account) + '_weight.zip';
                 // 创建一个a标签用于下载
                 var downloadLink = document.createElement('a');
                 downloadLink.href = filePath;
