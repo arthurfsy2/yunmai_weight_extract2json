@@ -24,4 +24,4 @@ if __name__ == "__main__":
     options = parser.parse_args()
 
     account = options.account
-    removeFile("./static", account)
+    removeFile("./static/result", account)

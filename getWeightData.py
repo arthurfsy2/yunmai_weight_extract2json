@@ -222,7 +222,7 @@ def getUserData(accessToken, payload, userId_real, account, nickname, height, is
     json_data = json.dumps(weight_data, indent=2)
     # print(f"weight_data: {weight_data}\n\n")
     if isOnline == 1:
-        weight_nicname_path = f'./static/{account}_weight.json'
+        weight_nicname_path = f'./static/result/{account}_weight.json'
     else:
         weight_nicname_path = f'./weight_{nickname}.json'
     with open(weight_nicname_path, 'w', encoding="utf-8") as f:
@@ -248,9 +248,9 @@ def getUserData(accessToken, payload, userId_real, account, nickname, height, is
             "$pieces$", pieces)
 
     if isOnline == 1:
-        with open(f'./static/{account}_weight.html', 'w', encoding="utf-8") as f:
+        with open(f'./static/result/{account}_weight.html', 'w', encoding="utf-8") as f:
             f.write(dataNew)
-        print(f'已生成./static/{account}_weight.html')
+        print(f'已生成./static/result/{account}_weight.html')
 
 
 def getUserInfo(account, password, nickname, height, isOnline):

@@ -181,7 +181,7 @@
                                     mapContainer.innerHTML = ''; // 清空地图容器
                                     files.forEach(file => {
                                         const fileLink = document.createElement('a');
-                                        fileLink.href = `/static/${file}`; // 使用相对路径
+                                        fileLink.href = `/static/result/${file}`; // 使用相对路径
                                         fileLink.textContent = file;
                                         fileLink.target = '_blank'; // 在新窗口中打开
                                         fileListContainer.appendChild(fileLink);
@@ -192,7 +192,7 @@
 
                                     // 创建 iframe 元素并设置其属性
                                     const iframe = document.createElement('iframe');
-                                    iframe.src = `/static/${account}_weight.html`; // 设置 iframe 的 src 属性
+                                    iframe.src = `/static/result/${account}_weight.html`; // 设置 iframe 的 src 属性
                                     iframe.width = '100%'; // 设置 iframe 的宽度
                                     iframe.height = '600'; // 设置 iframe 的高度
                                     iframe.frameBorder = '0'; // 可选：移除 iframe 边框
@@ -262,7 +262,7 @@
                         // 如果有查询到结果，则显示链接
                         matchedFiles.forEach(file => {
                             const fileLink = document.createElement('a');
-                            fileLink.href = `/static/${file}`; // 使用相对路径
+                            fileLink.href = `/static/result/${file}`; // 使用相对路径
                             fileLink.textContent = file;
                             fileLink.target = '_blank'; // 在新窗口中打开
                             searchListContainer.appendChild(fileLink);
@@ -277,7 +277,7 @@
 
                     // 创建 iframe 元素并设置其属性
                     const iframe = document.createElement('iframe');
-                    iframe.src = `/static/${searchAccount}_weight.html`; // 设置 iframe 的 src 属性
+                    iframe.src = `/static/result/${searchAccount}_weight.html`; // 设置 iframe 的 src 属性
                     iframe.width = '100%'; // 设置 iframe 的宽度
                     iframe.height = '600'; // 设置 iframe 的高度
                     iframe.frameBorder = '0'; // 可选：移除 iframe 边框
