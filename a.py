@@ -33,11 +33,11 @@ def run_script():
 
 
 @app.route('/list-files', methods=['POST'])
-def list_recap_files():
+def list_result_files():
     # 获取用户输入的账号
     username = request.form.get('account')
-    folder = os.path.join(app.static_folder, '')
-    files = os.listdir(folder)
+    result_folder = os.path.join(app.static_folder, 'result')
+    files = os.listdir(result_folder)
     # 筛选出以username开头且以.html结尾的文件
     user_html_files = [f for f in files if f.startswith(
         username)]
