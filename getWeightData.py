@@ -356,4 +356,4 @@ if __name__ == "__main__":
         getUserInfo(user["account"], user["password"],
                     user["nickname"], float(user["height"]), isOnline)
         if isOnline == 1:
-            zipUserFile(user["account"], "./static")
+            zipUserFile(user["account"], "./static/result")
