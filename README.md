@@ -2,9 +2,23 @@
 
 一个可以输入账号、密码即可获取云麦好轻数据的脚本。
 
-# 步骤
+在线导出网址：[获取好轻体重信息](https://haoqing.4a1801.life/static/index.html)
 
-1. clone 本项目到本地，并在当前路径下运行终端
+声明：
+
+1. 你也可以通过以下方法自行搭建前端的导出方式。
+2. 本项目与好轻官方无关！本网站不会存储你的个人账号、密码，只会用于个人数据的生成。如果不再需要，建议生成后删除个人文件。
+
+# 使用方法（前端）：
+
+1. 通过`pip install -r requirements.txt`安装依赖
+2. 通过`py a.py`执行前端程序，如果顺利的话，命令行可以看到“Running on http://XXX:4568”
+3. 浏览器打开本地 IP 地址："http://XXX:4568/static/index.html"，然后根据界面提示操作即可导出数据。
+4. 前端生成的数据，可在./static 路径下查看
+
+# 使用方法（后端）：
+
+1. git clone 本项目到本地，并在当前路径下运行终端
 2. 运行以下代码获取体重数据：
 
    需要在后面加入“你的手机号/密码/自定义的昵称/身高（米）”，如果有多组数据，则以逗号隔开
@@ -13,7 +27,7 @@
 
 单个举例：`python getWeightData.py "186XXXXX123/12xxx4/nickname1/1.8"`
 
-如果账号、密码无误的话，即可在当前路径下生成“userinfo*自定义昵称.json”文件，里面包括 userId_real、refreshToken、account_b64、password_RSA，以供 getWeightData.py 使用。当 getWeightData.py 正常运行后，会生成 `weight*自定义昵称.json`，记录了该账号的体重信息。如果输入了多个账号的信息，则批量生成 weight\_自定义昵称.json 文件
+如果账号、密码无误的话，当 getWeightData.py 正常运行后，会在当前生成 `weight*自定义昵称.json`，记录了该账号的体重信息。如果输入了多个账号的信息，则批量生成 weight\_自定义昵称.json 文件
 
 # Github Action
 
