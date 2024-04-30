@@ -16,6 +16,8 @@ jobs:
   sync:
     name: 同步
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
     steps:
       - name: Checkout
         uses: actions/checkout@v4
