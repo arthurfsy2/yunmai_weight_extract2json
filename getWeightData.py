@@ -251,9 +251,9 @@ def getUserData(accessToken, payload, userId_real, account, nickname, height, is
         with open(f'./static/result/{account}_weight.html', 'w', encoding="utf-8") as f:
             f.write(dataNew)
         print(f'已生成./static/result/{account}_weight.html')
+    return weight_data
 
-
-def getUserInfo(account, password, nickname, height, isOnline):
+def getUserInfo(account, password, nickname, height, garmin_account, garmin_password, isOnline):
     # 1. 加密账号密码
     account_b64, account_URI, password_RSA, password_URI = encrypt_account_password(
         account, password)
@@ -264,9 +264,11 @@ def getUserInfo(account, password, nickname, height, isOnline):
     # 3. accessToken
     accessToken = get_access_token(payload)
     # 4. 获取体重数据
-    getUserData(accessToken, payload, userId_real,
+    weight_data = getUserData(accessToken, payload, userId_real,
                 account, nickname, height, isOnline)
-
+    latest_data = weight_data[-1]
+    if garmin_account and garmin_password:
+        upload_to_garmin(garmin_account, garmin_password, latest_data)
 
 def get_BMI_status(h):
     s1 = 18.5
@@ -308,17 +310,31 @@ def get_BMI_status(h):
     return content
 
 
-def parse_string(input_string, isOnline):
+def parse_string(input_string):
     arr = []
     groups = input_string.split(',')
     for group in groups:
-        account, password, nickname, height = group.split('/')
+        account, password, nickname, height, *garmin_info = group.split('/')
         account = account.strip()
         password = password.strip()
         nickname = nickname.strip()
         height = height.strip()
-        arr.append(
-            {'account': account, 'password': password, 'nickname': nickname, 'height': height})
+        
+        if len(garmin_info) == 2:
+            garmin_account = garmin_info[0].strip()
+            garmin_password = garmin_info[1].strip()
+        else:
+            garmin_account = ""
+            garmin_password = ""
+        
+        arr.append({
+            'account': account,
+            'password': password,
+            'nickname': nickname,
+            'height': height,
+            'garmin_account': garmin_account,
+            'garmin_password': garmin_password
+        })
     return arr
 
 
@@ -341,19 +357,100 @@ def zipUserFile(account, path):
                     zipf.write(filepath, arcname=zip_path)
 
 
+
+def get_physique_type(bmi, body_fat):
+    if bmi < 18.5 and body_fat < 10:
+        return "7"
+    elif bmi < 18.5 and 10 < body_fat < 21:
+        return "4"
+    elif bmi < 18.5 and 21 < body_fat < 26:
+        return "1"
+    elif 18.5 < bmi < 21 and body_fat < 15:
+        return "6"
+    elif 21 < bmi < 24 and body_fat < 15:
+        return "8"
+    elif 18.5 < bmi < 24 and 15 < body_fat < 21:
+        return "5"
+    elif 24 < bmi < 28 and body_fat < 15:
+        return "9"
+    elif (24 < bmi < 28 and 15 < body_fat < 26) or (21 < bmi < 28 and 21 < body_fat < 26):
+        return "2"
+    elif (28 < bmi and 15 < body_fat) or (21 < bmi and body_fat < 26):
+        return "3"
+    else:
+        return "未知类型"
+
+
+def upload_to_garmin(email, password, item):
+    from garminconnect import (
+    Garmin,
+    GarminConnectConnectionError,
+    GarminConnectTooManyRequestsError,
+    GarminConnectAuthenticationError,
+    )
+    from datetime import datetime, timezone, timedelta
+
+
+    timestamp = item.get("timeStamp")
+    weight = item.get("weight")
+    percent_fat = item.get("fat")
+    percent_hydration = item.get("water")
+    visceral_fat_mass = round(item.get("fat") * weight / 100, 2)
+    bone_mass = item.get("bone")
+    muscle_mass = round(item.get("muscle") * weight / 100, 2)
+    basal_met = item.get("bmr")
+    metabolic_age = item.get("somaAge")
+    visceral_fat_rating = item.get("visFat")
+    bmi = item.get("bmi")
+    physique_rating = float(get_physique_type(bmi, percent_fat))
+
+    dt = datetime.fromtimestamp(timestamp, tz=timezone.utc)
+    # 将时区调整为中国时区
+    china_tz = timezone(timedelta(hours=8))
+    dt_china = dt.astimezone(china_tz)
+    iso_timestamp = dt_china.isoformat()
+    try:
+        garmin_client = Garmin(email, password, is_cn=True)
+        garmin_client.login()
+        print("佳明（cn）登陆成功！")  # 添加登录成功的提示
+    except (
+        GarminConnectConnectionError,
+        GarminConnectAuthenticationError,
+        GarminConnectTooManyRequestsError,
+    ) as err:
+        print("佳明（cn）登陆失败: %s" % err)
+        quit()
+    garmin_client.add_body_composition(
+            timestamp=iso_timestamp,
+            weight=weight,
+            percent_fat=percent_fat,
+            percent_hydration=percent_hydration,
+            visceral_fat_mass=visceral_fat_mass,
+            bone_mass=bone_mass,
+            muscle_mass=muscle_mass,
+            basal_met=basal_met,
+            # active_met=active_met,
+            physique_rating=physique_rating,
+            metabolic_age=metabolic_age,
+            visceral_fat_rating=visceral_fat_rating,
+            bmi=bmi
+        )       
+    print(f"{item.get("createTime")} 的体重：{weight}kg，已经上传成功！")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("input_string", help="输入:'用户名/密码/昵称'")
+    parser.add_argument("input_string", help="输入:'用户名/密码/昵称/身高（米）/佳明账号/佳明密码'")
     parser.add_argument(
         "--isOnline", help="check if created by online", type=int, default=0)
     options = parser.parse_args()
     input_string = options.input_string
     isOnline = options.isOnline
 
-    users = parse_string(input_string, isOnline)
+    users = parse_string(input_string)
     # print(users)
     for user in users:
         getUserInfo(user["account"], user["password"],
-                    user["nickname"], float(user["height"]), isOnline)
+                    user["nickname"], float(user["height"]), 
+                    user["garmin_account"], user["garmin_password"],
+                    isOnline)
         if isOnline == 1:
             zipUserFile(user["account"], "./static/result")
