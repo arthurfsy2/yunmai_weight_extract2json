@@ -390,7 +390,7 @@ def upload_to_garmin(email, password, item):
     )
     from datetime import datetime, timezone, timedelta
 
-
+    createTime = item.get("createTime")
     timestamp = item.get("timeStamp")
     weight = item.get("weight")
     percent_fat = item.get("fat")
@@ -435,7 +435,7 @@ def upload_to_garmin(email, password, item):
             visceral_fat_rating=visceral_fat_rating,
             bmi=bmi
         )       
-    print(f"{item.get("createTime")} 的体重：{weight}kg，已经上传成功！")
+    print(f"{createTime} 的体重：{weight}kg，已经上传成功！")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input_string", help="输入:'用户名/密码/昵称/身高（米）/佳明账号/佳明密码'")
