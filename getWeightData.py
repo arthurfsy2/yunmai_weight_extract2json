@@ -409,6 +409,7 @@ def upload_to_garmin(email, password, item):
     china_tz = timezone(timedelta(hours=8))
     dt_china = dt.astimezone(china_tz)
     iso_timestamp = dt_china.isoformat()
+    print("iso_timestamp:",iso_timestamp)
     try:
         garmin_client = Garmin(email, password, is_cn=True)
         garmin_client.login()
