@@ -11,7 +11,7 @@ import sys
 import zipfile
 import os
 import re
-
+import shutil,operator
 
 # 获取当前文件的绝对路径
 file_path = os.path.abspath(__file__)
@@ -253,7 +253,7 @@ def getUserData(accessToken, payload, userId_real, account, nickname, height, is
         print(f'已生成./static/result/{account}_weight.html')
     return weight_data
 
-def getUserInfo(account, password, nickname, height, garmin_account, garmin_password, isOnline):
+def getUserInfo(account, password, nickname, height, garmin_account, garmin_password, isOnline,latest_time_stamp_old):
     # 1. 加密账号密码
     account_b64, account_URI, password_RSA, password_URI = encrypt_account_password(
         account, password)
@@ -267,7 +267,8 @@ def getUserInfo(account, password, nickname, height, garmin_account, garmin_pass
     weight_data = getUserData(accessToken, payload, userId_real,
                 account, nickname, height, isOnline)
     latest_data = weight_data[-1]
-    if garmin_account and garmin_password:
+    latest_time_stamp_new = max(weight_data, key=operator.itemgetter("timeStamp"))["timeStamp"]
+    if garmin_account and garmin_password and latest_time_stamp_new > latest_time_stamp_old:
         upload_to_garmin(garmin_account, garmin_password, latest_data)
 
 def get_BMI_status(h):
@@ -449,9 +450,16 @@ if __name__ == "__main__":
     users = parse_string(input_string)
     # print(users)
     for user in users:
+        old_file = f'./weight_{user["nickname"]}.json'
+        if os.path.exists(old_file):
+            shutil.copyfile(old_file, f'{old_file}BAK')
+        with open(f'{old_file}BAK', 'r', encoding="utf-8") as f:
+            data_old = json.load(f)
+            latest_time_stamp_old = max(data_old, key=operator.itemgetter("timeStamp"))["timeStamp"]
         getUserInfo(user["account"], user["password"],
                     user["nickname"], float(user["height"]), 
                     user["garmin_account"], user["garmin_password"],
-                    isOnline)
+                    isOnline,latest_time_stamp_old)
         if isOnline == 1:
             zipUserFile(user["account"], "./static/result")
+        os.remove(f'{old_file}BAK')
