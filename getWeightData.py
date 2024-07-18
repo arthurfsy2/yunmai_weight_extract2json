@@ -12,6 +12,8 @@ import zipfile
 import os
 import re
 import shutil,operator
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 # 获取当前文件的绝对路径
 file_path = os.path.abspath(__file__)
@@ -440,6 +442,74 @@ def upload_to_garmin(email, password, data):
                 bmi=bmi
             )       
         print(f"{createTime} 的体重：{weight}kg，已经上传成功！")
+
+def parse_sync_time(sync_time_str):
+    return datetime.strptime(sync_time_str, '%Y-%m-%d %H:%M:%S')
+
+def find_closest_entry(data, target_datetime):
+    closest_entry = min(data, key=lambda x: abs(parse_sync_time(x['syncTime']) - target_datetime))
+    return closest_entry
+
+def generate_report(data):
+    latest_entry = max(data, key=lambda x: x['timeStamp'])
+    time_latest = parse_sync_time(latest_entry['syncTime'])
+    weight_latest = latest_entry['weight']
+
+    intervals = {
+        "1个月前": relativedelta(months=1),
+        "半年前": relativedelta(months=6),
+        "1年前": relativedelta(years=1),
+        "3年前": relativedelta(years=3),
+        "5年前": relativedelta(years=5),
+        "10年前": relativedelta(years=10)
+    }
+
+    report_lines = [
+        f"<p>最近称重：{time_latest.strftime('%Y-%m-%d %H:%M:%S')} | {weight_latest} kg</p>",
+        "<br>",
+        '<table class="table table-striped">',
+        '<thead>',
+        '<tr>',
+        '<th>时间间隔</th>',
+        '<th>当日日期(取最接近日期)</th>',
+        '<th>当时体重</th>',
+        '<th>体重变化</th>',
+        '<th>变化比例</th>',
+        '</tr>',
+        '</thead>',
+        '<tbody>'
+    ]
+
+    for label, interval in intervals.items():
+        target_date = time_latest - interval
+        closest_entry = find_closest_entry(data, target_date)
+        if closest_entry:
+            weight_diff = weight_latest - closest_entry['weight']
+            lose_percent = weight_diff / closest_entry['weight'] * 100
+            report_lines.append(
+                f"<tr><td>{label}</td><td>{closest_entry['syncTime']}</td><td>{closest_entry['weight']} kg</td><td>{weight_diff:.2f} kg</td><td>{lose_percent:.2f} %</td></tr>"
+            )
+
+    report_lines.append('</tbody></table>')
+
+    return "\n".join(report_lines)
+
+def read_json_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    return data
+
+def read_html_template(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        template = file.read()
+    return template
+
+def save_html_report(nickname, template, report_content, output_file_path):
+    html_content = template.replace("{{ report_content }}", report_content).replace("{{ nickname }}", nickname)
+    with open(output_file_path, 'w', encoding='utf-8') as file:
+        file.write(html_content)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input_string", help="输入:'用户名/密码/昵称/身高（米）/佳明账号/佳明密码'")
@@ -465,3 +535,11 @@ if __name__ == "__main__":
         if isOnline == 1:
             zipUserFile(user["account"], "./static/result")
         os.remove(f'{old_file}BAK')
+        
+        output_file = f'./weight_report_{user["nickname"]}.html'
+
+        data = read_json_file(old_file)
+        report_content  = generate_report(data)
+        template = read_html_template('./weight_report_template.html')
+        nickname = user["nickname"]
+        save_html_report(nickname, template, report_content, output_file)
