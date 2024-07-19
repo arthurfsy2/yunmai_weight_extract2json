@@ -1,23 +1,67 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
-    <meta charset="utf-8" />
-    <title>$nickname$的体重</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{nickname}} 体重数据统计</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.1/css/bootstrap.min.css" />
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-      }
-
-      #chart-container {
-        position: relative;
-        height: 100vh;
-        overflow: hidden;
-      }
-    </style>
+        * {
+          margin: 0;
+          padding: 0;
+        }
+  
+        #chart-container {
+          position: relative;
+          height: 100vh;
+          overflow: hidden;
+        }
+      </style>
   </head>
-
   <body>
+    <div class="container-fluid">
+      <h1 class="text-center mb-4">{{nickname}} 体重数据统计</h1>
+      <ul class="list-group">
+        <li class="list-group-item">最近称重：<b>{{最近称重}}</b></li>
+        <li class="list-group-item">历史最重：<b>{{历史最重}}</b></li>
+        <li class="list-group-item">历史最轻：<b>{{历史最轻}}</b></li>
+      </ul>
+    </div>
+    <div class="container-fluid2">
+      <h3 class="text-center mb-4">近期体重</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>时间间隔</th>
+            <th>当日日期(取最接近日期)</th>
+            <th>当时体重</th>
+            <th>体重变化</th>
+            <th>变化比例</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{report_lines_by_months}}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="container-fluid3">
+      <h3 class="text-center mb-5">历史体重</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>时间间隔</th>
+            <th>当日日期(取最接近日期)</th>
+            <th>当时体重</th>
+            <th>体重变化</th>
+            <th>变化比例</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{report_lines_by_years}}
+        </tbody>
+      </table>
+    </div>
     <div id="chart-container"></div>
     <script src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <script>
@@ -28,6 +72,10 @@
       });
 
       var option = {
+        title: {
+          text: '体重折线图',
+          left:'middle'
+        },
         tooltip: {
           trigger: "axis",
         },
@@ -122,5 +170,8 @@
       // 在 DOM 加载完成后执行 initChart 函数
       document.addEventListener("DOMContentLoaded", initChart);
     </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.1/js/bootstrap.min.js"></script>
   </body>
 </html>
