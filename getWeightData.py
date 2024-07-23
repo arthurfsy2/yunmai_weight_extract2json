@@ -258,7 +258,7 @@ def getUserData(accessToken, payload, userId_real, account, nickname, height, is
     print(f'已生成{html_name}')
     return weight_data
 
-def getUserInfo(account, password, nickname, height, garmin_account, garmin_password, isOnline,local_list):
+def getUserInfo(account, password, nickname, height, garmin_account, garmin_password, isOnline, local_list):
     # 1. 加密账号密码
     account_b64, account_URI, password_RSA, password_URI = encrypt_account_password(
         account, password)
@@ -272,7 +272,8 @@ def getUserInfo(account, password, nickname, height, garmin_account, garmin_pass
     weight_data = getUserData(accessToken, payload, userId_real,
                 account, nickname, height, isOnline)
     online_list = [item["timeStamp"] for item in weight_data]
-    filtered_data = [item for item in weight_data if item["timeStamp"] not in local_list]
+    if local_list:
+        filtered_data = [item for item in weight_data if item["timeStamp"] not in local_list]
     if garmin_account and garmin_password:
         if filtered_data:
             upload_to_garmin(garmin_account, garmin_password, filtered_data)
@@ -557,9 +558,11 @@ if __name__ == "__main__":
         old_file = f'./weight_{user["nickname"]}.json'
         if os.path.exists(old_file):
             shutil.copyfile(old_file, f'{old_file}BAK')
-        with open(f'{old_file}BAK', 'r', encoding="utf-8") as f:
-            data_old = json.load(f)
-            local_list = [item["timeStamp"] for item in data_old]
+            with open(f'{old_file}BAK', 'r', encoding="utf-8") as f:
+                data_old = json.load(f)
+                local_list = [item["timeStamp"] for item in data_old]
+        else:
+            local_list = None
         getUserInfo(user["account"], user["password"],
                     user["nickname"], float(user["height"]), 
                     user["garmin_account"], user["garmin_password"],
