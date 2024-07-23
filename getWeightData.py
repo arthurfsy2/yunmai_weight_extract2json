@@ -569,4 +569,5 @@ if __name__ == "__main__":
                     isOnline,local_list)
         if isOnline == 1:
             zipUserFile(user["account"], "./static/result")
-        os.remove(f'{old_file}BAK')
+        if os.path.exists(f'{old_file}BAK'):
+            os.remove(f'{old_file}BAK')
