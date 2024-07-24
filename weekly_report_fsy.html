@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fsy 体重周报</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        .header { text-align: center; }
+        .weight-summary { display: flex; justify-content: space-between; }
+        .chart { height: 300px; margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .up-arrow { color: green; }
+        .down-arrow { color: red; }
+    </style>
+    <style>
+        .up-arrow { color: orange; }
+        .down-arrow { color: blue; }
+        .weight-value { color: inherit; }  /* 使数值继承默认颜色 */
+    </style>
+    <style>
+        .weight-container {
+            background-color: #F8F9FB;
+            ; /* 淡色背景 */
+            padding: 10px; /* 添加一些内边距 */
+            border-radius: 5px; /* 可选：圆角效果 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="header">fsy 体重周报</h1>
+        <h3 class="header">2024/07/15~2024/07/21</h3>
+        <div class="weight-summary">
+            <div class="weight-container">
+                <h2>本周最终体重</h2>
+                <p>75.39 公斤</p>
+            </div>
+            <div class="weight-container">
+                <h2>与上周相比</h2>
+                <p>
+                    
+                        <span class="down-arrow">↓</span> <span class="weight-value">0.49</span>
+                    
+                    公斤
+                </p>
+            </div>
+        </div>
+        <div id="weightChart" class="chart"></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>指标</th>
+                    <th>上周</th>
+                    <th>本周</th>
+                    <th>变化</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>BMI</td>
+                    <td>23.2</td>
+                    <td>23.0</td>
+                    <td>
+                        
+                            <span class="down-arrow">↓</span> <span class="weight-value">0.2</span>
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>脂肪(%)</td>
+                    <td>19.1</td>
+                    <td>18.9</td>
+                    <td>
+                        
+                            <span class="down-arrow">↓</span> <span class="weight-value">0.2</span>
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>肌肉(%)</td>
+                    <td>54.2</td>
+                    <td>54.34</td>
+                    <td>
+                        
+                            <span class="up-arrow">↑</span> <span class="weight-value">0.14</span>
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>水分(%)</td>
+                    <td>58.7</td>
+                    <td>58.9</td>
+                    <td>
+                        
+                            <span class="up-arrow">↑</span> <span class="weight-value">0.2</span>
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>蛋白质(%)</td>
+                    <td>17.0</td>
+                    <td>17.0</td>
+                    <td>
+                        
+                            -
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>基础代谢率</td>
+                    <td>1695.0</td>
+                    <td>1690.7</td>
+                    <td>
+                        
+                            <span class="down-arrow">↓</span> <span class="weight-value">4.3</span>
+                        
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+
+    <script>
+        var chartDom = document.getElementById('weightChart');
+        var myChart = echarts.init(chartDom);
+        
+        // 提取体重数据
+        var weightData = [76.35, 75.56, 75.05, 75.15, 74.74, 74.75, 75.39];
+        
+        // 动态设置 y 轴的最小值和最大值
+        var minWeight = Math.min(...weightData) - 1;
+        var maxWeight = Math.max(...weightData) + 1;
+
+        var option = {
+            title: {
+                text: '本周体重变化趋势',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function(params) {
+                    return params[0].name + ': ' + params[0].value + ' kg';
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                name: '日期'
+            },
+            yAxis: {
+                type: 'value',
+                name: '体重 (公斤)',
+                min: minWeight,
+                max: maxWeight
+            },
+            series: [{
+                data: weightData,
+                type: 'line',
+                smooth: true
+            }]
+        };
+        myChart.setOption(option);
+    </script>
+</body>
+</html>

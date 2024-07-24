@@ -14,6 +14,7 @@ import re
 import shutil,operator
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from jinja2 import Template
 
 # 获取当前文件的绝对路径
 file_path = os.path.abspath(__file__)
@@ -111,7 +112,6 @@ def get_Weight_request(url, headers, payload):
 
     response = requests.get(url, headers=headers, data=payload)
     json_data = response.json()
-    json_data = json_data
     return json_data
 
 
@@ -272,6 +272,7 @@ def getUserInfo(account, password, nickname, height, garmin_account, garmin_pass
     weight_data = getUserData(accessToken, payload, userId_real,
                 account, nickname, height, isOnline)
     online_list = [item["timeStamp"] for item in weight_data]
+    get_weekly_data(accessToken,userId_real,nickname)
     if local_list:
         filtered_data = [item for item in weight_data if item["timeStamp"] not in local_list]
     if garmin_account and garmin_password:
@@ -542,7 +543,101 @@ def save_html_report(nickname, template, report_content, output_file_path):
     with open(output_file_path, 'w', encoding='utf-8') as file:
         file.write(html_content)
 
+def get_weekly_data(accessToken,userId,nickname):
+    timestamp = str(int(time.time()))
+    code = timestamp[:8] + "00"
+    # 获取当前年份和周数
+    now = datetime.now()
+    year, week, _ = now.isocalendar()
+    weekly_url = f"https://restapi.iyunmai.com/healthweekly/ios/weekReport/detail.json?accessToken={accessToken}&userId={userId}&code={code}&signVersion=3&year={year}&week={week-1}"
+    response = requests.get(weekly_url)
+    json_data = response.json()
+    json_data = json_data["data"]
+    json_data = json.dumps(json_data, indent=2,ensure_ascii=False)
+    with open(f"weekly_data_{nickname}.json", 'w', encoding="utf-8") as f:
+        f.write(json_data)
+    return(json_data) 
 
+def get_weekly_report(input_path, user_name, output_path):
+    # 读取 JSON 数据
+    with open(input_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    # 提取数据
+    current_weight = data['weight']['endWeight']
+    last_week_weight = data['lastWeekWeightReport']['endWeight']
+    weight_change = round(current_weight - last_week_weight, 2)
+
+    # 本周体重数据
+    weight_data = [entry['weight'] for entry in data['weight']['detail']]
+    weight_data_str = ', '.join(map(str, weight_data))
+
+    # BMI 和其他指标
+    current_bmi = data['weight']['bmi']
+    last_week_bmi = data['lastWeekWeightReport']['bmi']
+    bmi_change = round(current_bmi['value'] - last_week_bmi['value'], 2)
+
+    # 脂肪、肌肉等其他指标
+    current_fat = data['weight']['fat']
+    last_week_fat = data['lastWeekWeightReport']['fat']
+    fat_change = round(current_fat['value'] - last_week_fat['value'], 2)
+
+    current_muscle = data['weight']['muscle']
+    last_week_muscle = data['lastWeekWeightReport']['muscle']
+    muscle_change = round(current_muscle['value'] - last_week_muscle['value'], 2)
+
+    current_water = data['weight']['water']
+    last_week_water = data['lastWeekWeightReport']['water']
+    water_change = round(current_water['value'] - last_week_water['value'], 2)
+
+    current_protein = data['weight']['protein']
+    last_week_protein = data['lastWeekWeightReport']['protein']
+    protein_change = round(current_protein['value'] - last_week_protein['value'], 2)
+
+    current_bmr = data['weight']['bmr']
+    last_week_bmr = data['lastWeekWeightReport']['bmr']
+    bmr_change = round(current_bmr - last_week_bmr, 2)
+
+    # 处理时间戳
+    start_time = datetime.fromtimestamp(data['startTime']).strftime('%Y/%m/%d')
+    end_time = datetime.fromtimestamp(data['endTime']).strftime('%Y/%m/%d')
+    date_range = f"{start_time}~{end_time}"
+
+    # 读取模板
+    with open("weekly_template.html", 'r', encoding='utf-8') as f:
+        template = Template(f.read())
+
+    # 渲染模板
+    output = template.render(
+        user_name=user_name,
+        current_weight=current_weight,
+        weight_change=weight_change,
+        weight_data=weight_data_str,
+        current_bmi=current_bmi,
+        last_week_bmi=last_week_bmi,
+        bmi_change=bmi_change,
+        current_fat=current_fat,
+        last_week_fat=last_week_fat,
+        fat_change=fat_change,
+        current_muscle=current_muscle,
+        last_week_muscle=last_week_muscle,
+        muscle_change=muscle_change,
+        current_water=current_water,
+        last_week_water=last_week_water,
+        water_change=water_change,
+        current_protein=current_protein,
+        last_week_protein=last_week_protein,
+        protein_change=protein_change,
+        current_bmr=current_bmr,
+        last_week_bmr=last_week_bmr,
+        bmr_change=bmr_change,
+        date_range=date_range  # 添加日期范围
+    )
+
+    # 保存为 HTML 文件
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(output)
+    os.remove(input_path)
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input_string", help="输入:'用户名/密码/昵称/身高（米）/佳明账号/佳明密码'")
@@ -567,6 +662,7 @@ if __name__ == "__main__":
                     user["nickname"], float(user["height"]), 
                     user["garmin_account"], user["garmin_password"],
                     isOnline,local_list)
+        get_weekly_report(f"weekly_data_{user["nickname"]}.json", user["nickname"], f"weekly_report_{user["nickname"]}.html")
         if isOnline == 1:
             zipUserFile(user["account"], "./static/result")
         if os.path.exists(f'{old_file}BAK'):

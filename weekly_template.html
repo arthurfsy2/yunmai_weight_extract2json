@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user_name }} 体重周报</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        .header { text-align: center; }
+        .weight-summary { display: flex; justify-content: space-between; }
+        .chart { height: 300px; margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .up-arrow { color: green; }
+        .down-arrow { color: red; }
+    </style>
+    <style>
+        .up-arrow { color: orange; }
+        .down-arrow { color: blue; }
+        .weight-value { color: inherit; }  /* 使数值继承默认颜色 */
+    </style>
+    <style>
+        .weight-container {
+            background-color: #F8F9FB;
+            ; /* 淡色背景 */
+            padding: 10px; /* 添加一些内边距 */
+            border-radius: 5px; /* 可选：圆角效果 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="header">{{ user_name }} 体重周报</h1>
+        <h3 class="header">{{date_range}}</h3>
+        <div class="weight-summary">
+            <div class="weight-container">
+                <h2>本周最终体重</h2>
+                <p>{{ current_weight }} 公斤</p>
+            </div>
+            <div class="weight-container">
+                <h2>与上周相比</h2>
+                <p>
+                    {% if weight_change > 0 %}
+                        <span class="up-arrow">↑</span> <span class="weight-value">{{ weight_change }}</span>
+                    {% elif weight_change < 0 %}
+                        <span class="down-arrow">↓</span> <span class="weight-value">{{ -weight_change }}</span>
+                    {% else %}
+                        {{ weight_change }}
+                    {% endif %}
+                    公斤
+                </p>
+            </div>
+        </div>
+        <div id="weightChart" class="chart"></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>指标</th>
+                    <th>上周</th>
+                    <th>本周</th>
+                    <th>变化</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>BMI</td>
+                    <td>{{ last_week_bmi.value }}</td>
+                    <td>{{ current_bmi.value }}</td>
+                    <td>
+                        {% if bmi_change > 0 %}
+                            <span class="up-arrow">↑</span> <span class="weight-value">{{ bmi_change }}</span>
+                        {% elif bmi_change < 0 %}
+                            <span class="down-arrow">↓</span> <span class="weight-value">{{ -bmi_change }}</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>脂肪(%)</td>
+                    <td>{{ last_week_fat.value }}</td>
+                    <td>{{ current_fat.value }}</td>
+                    <td>
+                        {% if fat_change > 0 %}
+                            <span class="up-arrow">↑</span> <span class="weight-value">{{ fat_change }}</span>
+                        {% elif fat_change < 0 %}
+                            <span class="down-arrow">↓</span> <span class="weight-value">{{ -fat_change }}</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>肌肉(%)</td>
+                    <td>{{ last_week_muscle.value }}</td>
+                    <td>{{ current_muscle.value }}</td>
+                    <td>
+                        {% if muscle_change > 0 %}
+                            <span class="up-arrow">↑</span> <span class="weight-value">{{ muscle_change }}</span>
+                        {% elif muscle_change < 0 %}
+                            <span class="down-arrow">↓</span> <span class="weight-value">{{ -muscle_change }}</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>水分(%)</td>
+                    <td>{{ last_week_water.value }}</td>
+                    <td>{{ current_water.value }}</td>
+                    <td>
+                        {% if water_change > 0 %}
+                            <span class="up-arrow">↑</span> <span class="weight-value">{{ water_change }}</span>
+                        {% elif water_change < 0 %}
+                            <span class="down-arrow">↓</span> <span class="weight-value">{{ -water_change }}</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>蛋白质(%)</td>
+                    <td>{{ last_week_protein.value }}</td>
+                    <td>{{ current_protein.value }}</td>
+                    <td>
+                        {% if protein_change > 0 %}
+                            <span class="up-arrow">↑</span> <span class="weight-value">{{ protein_change }}</span>
+                        {% elif protein_change < 0 %}
+                            <span class="down-arrow">↓</span> <span class="weight-value">{{ -protein_change }}</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>基础代谢率</td>
+                    <td>{{ last_week_bmr }}</td>
+                    <td>{{ current_bmr }}</td>
+                    <td>
+                        {% if bmr_change > 0 %}
+                            <span class="up-arrow">↑</span> <span class="weight-value">{{ bmr_change }}</span>
+                        {% elif bmr_change < 0 %}
+                            <span class="down-arrow">↓</span> <span class="weight-value">{{ -bmr_change }}</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+
+    <script>
+        var chartDom = document.getElementById('weightChart');
+        var myChart = echarts.init(chartDom);
+        
+        // 提取体重数据
+        var weightData = [{{ weight_data }}];
+        
+        // 动态设置 y 轴的最小值和最大值
+        var minWeight = Math.min(...weightData) - 1;
+        var maxWeight = Math.max(...weightData) + 1;
+
+        var option = {
+            title: {
+                text: '本周体重变化趋势',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function(params) {
+                    return params[0].name + ': ' + params[0].value + ' kg';
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                name: '日期'
+            },
+            yAxis: {
+                type: 'value',
+                name: '体重 (公斤)',
+                min: minWeight,
+                max: maxWeight
+            },
+            series: [{
+                data: weightData,
+                type: 'line',
+                smooth: true
+            }]
+        };
+        myChart.setOption(option);
+    </script>
+</body>
+</html>
