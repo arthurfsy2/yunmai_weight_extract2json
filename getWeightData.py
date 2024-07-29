@@ -662,7 +662,7 @@ if __name__ == "__main__":
                     user["nickname"], float(user["height"]), 
                     user["garmin_account"], user["garmin_password"],
                     isOnline,local_list)
-        get_weekly_report(f"weekly_data_{user["nickname"]}.json", user["nickname"], f"weekly_report_{user["nickname"]}.html")
+        get_weekly_report(f"weekly_data_{user['nickname']}.json", user['nickname'], f"weekly_report_{user['nickname']}.html")
         if isOnline == 1:
             zipUserFile(user["account"], "./static/result")
         if os.path.exists(f'{old_file}BAK'):
