@@ -34,17 +34,17 @@
 <body>
     <div class="container">
         <h1 class="header">fsy 体重周报</h1>
-        <h3 class="header">2024/08/12~2024/08/18</h3>
+        <h3 class="header">2024/08/19~2024/08/25</h3>
         <div class="weight-summary">
             <div class="weight-container">
                 <h2>本周最终体重</h2>
-                <p>74.31 公斤</p>
+                <p>72.71 公斤</p>
             </div>
             <div class="weight-container">
                 <h2>与上周相比</h2>
                 <p>
                     
-                        <span class="down-arrow">↓</span> <span class="weight-value">1.14</span>
+                        <span class="down-arrow">↓</span> <span class="weight-value">1.6</span>
                     
                     公斤
                 </p>
@@ -63,18 +63,8 @@
             <tbody>
                 <tr>
                     <td>BMI</td>
-                    <td>23.0</td>
                     <td>22.7</td>
-                    <td>
-                        
-                            <span class="down-arrow">↓</span> <span class="weight-value">0.3</span>
-                        
-                    </td>
-                </tr>
-                <tr>
-                    <td>脂肪(%)</td>
-                    <td>18.9</td>
-                    <td>18.4</td>
+                    <td>22.2</td>
                     <td>
                         
                             <span class="down-arrow">↓</span> <span class="weight-value">0.5</span>
@@ -82,9 +72,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>脂肪(%)</td>
+                    <td>18.4</td>
+                    <td>17.7</td>
+                    <td>
+                        
+                            <span class="down-arrow">↓</span> <span class="weight-value">0.7</span>
+                        
+                    </td>
+                </tr>
+                <tr>
                     <td>肌肉(%)</td>
-                    <td>54.3</td>
                     <td>54.7</td>
+                    <td>55.1</td>
                     <td>
                         
                             <span class="up-arrow">↑</span> <span class="weight-value">0.4</span>
@@ -93,31 +93,31 @@
                 </tr>
                 <tr>
                     <td>水分(%)</td>
-                    <td>58.9</td>
                     <td>59.2</td>
+                    <td>59.7</td>
                     <td>
                         
-                            <span class="up-arrow">↑</span> <span class="weight-value">0.3</span>
+                            <span class="up-arrow">↑</span> <span class="weight-value">0.5</span>
                         
                     </td>
                 </tr>
                 <tr>
                     <td>蛋白质(%)</td>
-                    <td>17.0</td>
                     <td>17.1</td>
+                    <td>17.3</td>
                     <td>
                         
-                            <span class="up-arrow">↑</span> <span class="weight-value">0.1</span>
+                            <span class="up-arrow">↑</span> <span class="weight-value">0.2</span>
                         
                     </td>
                 </tr>
                 <tr>
                     <td>基础代谢率</td>
-                    <td>1691.0</td>
                     <td>1679.0</td>
+                    <td>1662.0</td>
                     <td>
                         
-                            <span class="down-arrow">↓</span> <span class="weight-value">12.0</span>
+                            <span class="down-arrow">↓</span> <span class="weight-value">17.0</span>
                         
                     </td>
                 </tr>
@@ -131,7 +131,7 @@
         var myChart = echarts.init(chartDom);
         
         // 提取体重数据
-        var weightData = [75.54, 74.51, 75.05, 74.44, 74.51, 74.25, 74.31];
+        var weightData = [74.0, 73.81, 73.61, 73.75, 73.5, 72.71];
         
         // 动态设置 y 轴的最小值和最大值
         var minWeight = Math.min(...weightData) - 1;
