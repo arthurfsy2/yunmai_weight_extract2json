@@ -54,7 +54,7 @@
                 </p>
             </div>
         </div>
-        <div id="weightChart" class="chart"></div>
+        <div id="weightChart_{{user_name}}" class="chart"></div>
         <table>
             <thead>
                 <tr>
@@ -155,7 +155,7 @@
     </div>
 
     <script>
-        var chartDom = document.getElementById('weightChart');
+        var chartDom = document.getElementById('weightChart_{{user_name}}');
         var myChart = echarts.init(chartDom);
         
         // 提取体重数据
