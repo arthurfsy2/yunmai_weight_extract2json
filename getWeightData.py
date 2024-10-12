@@ -564,80 +564,86 @@ def get_weekly_report(input_path, user_name, output_path):
         data = json.load(f)
 
     # 提取数据
-    current_weight = data['weight']['endWeight']
-    last_week_weight = data['lastWeekWeightReport']['endWeight']
-    weight_change = round(current_weight - last_week_weight, 2)
+    try:
+        current_weight = data['weight']['endWeight']
+    except (KeyError, TypeError) as e:
+        current_weight = None  # 或者设置一个默认值
 
-    # 本周体重数据
-    weight_data = [entry['weight'] for entry in data['weight']['detail']]
-    weight_data_str = ', '.join(map(str, weight_data))
+    if current_weight:
+        last_week_weight = data['lastWeekWeightReport']['endWeight']
+        weight_change = round(current_weight - last_week_weight, 2)
 
-    # BMI 和其他指标
-    current_bmi = data['weight']['bmi']
-    last_week_bmi = data['lastWeekWeightReport']['bmi']
-    bmi_change = round(current_bmi['value'] - last_week_bmi['value'], 2)
+        # 本周体重数据
+        weight_data = [entry['weight'] for entry in data['weight']['detail']]
+        weight_data_str = ', '.join(map(str, weight_data))
 
-    # 脂肪、肌肉等其他指标
-    current_fat = data['weight']['fat']
-    last_week_fat = data['lastWeekWeightReport']['fat']
-    fat_change = round(current_fat['value'] - last_week_fat['value'], 2)
+        # BMI 和其他指标
+        current_bmi = data['weight']['bmi']
+        last_week_bmi = data['lastWeekWeightReport']['bmi']
+        bmi_change = round(current_bmi['value'] - last_week_bmi['value'], 2)
 
-    current_muscle = data['weight']['muscle']
-    last_week_muscle = data['lastWeekWeightReport']['muscle']
-    muscle_change = round(current_muscle['value'] - last_week_muscle['value'], 2)
+        # 脂肪、肌肉等其他指标
+        current_fat = data['weight']['fat']
+        last_week_fat = data['lastWeekWeightReport']['fat']
+        fat_change = round(current_fat['value'] - last_week_fat['value'], 2)
 
-    current_water = data['weight']['water']
-    last_week_water = data['lastWeekWeightReport']['water']
-    water_change = round(current_water['value'] - last_week_water['value'], 2)
+        current_muscle = data['weight']['muscle']
+        last_week_muscle = data['lastWeekWeightReport']['muscle']
+        muscle_change = round(current_muscle['value'] - last_week_muscle['value'], 2)
 
-    current_protein = data['weight']['protein']
-    last_week_protein = data['lastWeekWeightReport']['protein']
-    protein_change = round(current_protein['value'] - last_week_protein['value'], 2)
+        current_water = data['weight']['water']
+        last_week_water = data['lastWeekWeightReport']['water']
+        water_change = round(current_water['value'] - last_week_water['value'], 2)
 
-    current_bmr = data['weight']['bmr']
-    last_week_bmr = data['lastWeekWeightReport']['bmr']
-    bmr_change = round(current_bmr - last_week_bmr, 2)
+        current_protein = data['weight']['protein']
+        last_week_protein = data['lastWeekWeightReport']['protein']
+        protein_change = round(current_protein['value'] - last_week_protein['value'], 2)
 
-    # 处理时间戳
-    start_time = datetime.fromtimestamp(data['startTime']).strftime('%Y/%m/%d')
-    end_time = datetime.fromtimestamp(data['endTime']).strftime('%Y/%m/%d')
-    date_range = f"{start_time}~{end_time}"
+        current_bmr = data['weight']['bmr']
+        last_week_bmr = data['lastWeekWeightReport']['bmr']
+        bmr_change = round(current_bmr - last_week_bmr, 2)
 
-    # 读取模板
-    with open("weekly_template.html", 'r', encoding='utf-8') as f:
-        template = Template(f.read())
+        # 处理时间戳
+        start_time = datetime.fromtimestamp(data['startTime']).strftime('%Y/%m/%d')
+        end_time = datetime.fromtimestamp(data['endTime']).strftime('%Y/%m/%d')
+        date_range = f"{start_time}~{end_time}"
 
-    # 渲染模板
-    output = template.render(
-        user_name=user_name,
-        current_weight=current_weight,
-        weight_change=weight_change,
-        weight_data=weight_data_str,
-        current_bmi=current_bmi,
-        last_week_bmi=last_week_bmi,
-        bmi_change=bmi_change,
-        current_fat=current_fat,
-        last_week_fat=last_week_fat,
-        fat_change=fat_change,
-        current_muscle=current_muscle,
-        last_week_muscle=last_week_muscle,
-        muscle_change=muscle_change,
-        current_water=current_water,
-        last_week_water=last_week_water,
-        water_change=water_change,
-        current_protein=current_protein,
-        last_week_protein=last_week_protein,
-        protein_change=protein_change,
-        current_bmr=current_bmr,
-        last_week_bmr=last_week_bmr,
-        bmr_change=bmr_change,
-        date_range=date_range  # 添加日期范围
-    )
+        # 读取模板
+        with open("weekly_template.html", 'r', encoding='utf-8') as f:
+            template = Template(f.read())
 
-    # 保存为 HTML 文件
-    with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(output)
+        # 渲染模板
+        output = template.render(
+            user_name=user_name,
+            current_weight=current_weight,
+            weight_change=weight_change,
+            weight_data=weight_data_str,
+            current_bmi=current_bmi,
+            last_week_bmi=last_week_bmi,
+            bmi_change=bmi_change,
+            current_fat=current_fat,
+            last_week_fat=last_week_fat,
+            fat_change=fat_change,
+            current_muscle=current_muscle,
+            last_week_muscle=last_week_muscle,
+            muscle_change=muscle_change,
+            current_water=current_water,
+            last_week_water=last_week_water,
+            water_change=water_change,
+            current_protein=current_protein,
+            last_week_protein=last_week_protein,
+            protein_change=protein_change,
+            current_bmr=current_bmr,
+            last_week_bmr=last_week_bmr,
+            bmr_change=bmr_change,
+            date_range=date_range  # 添加日期范围
+        )
+
+        # 保存为 HTML 文件
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(output)
     os.remove(input_path)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input_string", help="输入:'用户名/密码/昵称/身高（米）/佳明账号/佳明密码'")
