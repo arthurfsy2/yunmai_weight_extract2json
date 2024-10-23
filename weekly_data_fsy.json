@@ -1,0 +1,73 @@
+{
+  "userId": 101011281,
+  "userName": "冯四块",
+  "avatarUrl": "<null>",
+  "sex": 1,
+  "year": 2024,
+  "week": 42,
+  "startTime": 1728835200,
+  "endTime": 1729353600,
+  "generateTime": 1729440312,
+  "menstrualEstimateTime": null,
+  "sysTime": 1729664420,
+  "weight": {
+    "detail": [
+      {
+        "datetime": 1728835200,
+        "weight": 74.46
+      },
+      {
+        "datetime": 1728921600,
+        "weight": 74.44
+      },
+      {
+        "datetime": 1729008000,
+        "weight": 74.29
+      },
+      {
+        "datetime": 1729094400,
+        "weight": 73.92
+      },
+      {
+        "datetime": 1729180800,
+        "weight": 73.93
+      }
+    ],
+    "targetType": 1,
+    "targetStatus": 1,
+    "period": 2,
+    "periodFrequency": 1,
+    "startWeight": 74.46,
+    "endWeight": 73.93,
+    "bmi": {
+      "value": 22.6,
+      "level": 2
+    },
+    "water": {
+      "value": 59.4,
+      "level": 2
+    },
+    "protein": {
+      "value": 17.1,
+      "level": 2
+    },
+    "fat": {
+      "value": 18.2,
+      "level": 2
+    },
+    "bmr": 1676.0,
+    "muscle": {
+      "value": 54.8,
+      "level": 2
+    },
+    "minWeight": null,
+    "maxWeight": null
+  },
+  "lastWeekWeightReport": null,
+  "food": null,
+  "sport": null,
+  "lastWeekSportReport": null,
+  "habit": null,
+  "drinkWater": null,
+  "hasFatScale": 1
+}

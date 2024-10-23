@@ -43,15 +43,17 @@
             <div class="weight-container">
                 <h2>与上周相比</h2>
                 <p>
-                    {% if weight_change > 0 %}
-                        <span class="up-arrow">↑</span> <span class="weight-value">{{ weight_change }}</span>
+                    {% if weight_change == '-' %}
+                        无比对数据
+                    {% elif weight_change > 0 %}
+                        <span class="up-arrow">↑</span> <span class="weight-value">{{ weight_change }}公斤</span>
                     {% elif weight_change < 0 %}
-                        <span class="down-arrow">↓</span> <span class="weight-value">{{ -weight_change }}</span>
+                        <span class="down-arrow">↓</span> <span class="weight-value">{{ -weight_change }}公斤</span>
                     {% else %}
                         {{ weight_change }}
                     {% endif %}
-                    公斤
-                </p>
+                    
+                </p>                
             </div>
         </div>
         <div id="weightChart_{{user_name}}" class="chart"></div>
@@ -70,21 +72,25 @@
                     <td>{{ last_week_bmi.value }}</td>
                     <td>{{ current_bmi.value }}</td>
                     <td>
-                        {% if bmi_change > 0 %}
+                        {% if bmi_change == '-' %}
+                            {{ bmi_change }}
+                        {% elif bmi_change > 0 %}
                             <span class="up-arrow">↑</span> <span class="weight-value">{{ bmi_change }}</span>
                         {% elif bmi_change < 0 %}
                             <span class="down-arrow">↓</span> <span class="weight-value">{{ -bmi_change }}</span>
                         {% else %}
                             -
                         {% endif %}
-                    </td>
+                    </td>                    
                 </tr>
                 <tr>
                     <td>脂肪(%)</td>
                     <td>{{ last_week_fat.value }}</td>
                     <td>{{ current_fat.value }}</td>
                     <td>
-                        {% if fat_change > 0 %}
+                        {% if fat_change == '-' %}
+                            {{ fat_change }}
+                        {% elif fat_change > 0 %}
                             <span class="up-arrow">↑</span> <span class="weight-value">{{ fat_change }}</span>
                         {% elif fat_change < 0 %}
                             <span class="down-arrow">↓</span> <span class="weight-value">{{ -fat_change }}</span>
@@ -98,7 +104,9 @@
                     <td>{{ last_week_muscle.value }}</td>
                     <td>{{ current_muscle.value }}</td>
                     <td>
-                        {% if muscle_change > 0 %}
+                        {% if muscle_change == '-' %}
+                            {{ muscle_change }}
+                        {% elif muscle_change > 0 %}
                             <span class="up-arrow">↑</span> <span class="weight-value">{{ muscle_change }}</span>
                         {% elif muscle_change < 0 %}
                             <span class="down-arrow">↓</span> <span class="weight-value">{{ -muscle_change }}</span>
@@ -112,7 +120,9 @@
                     <td>{{ last_week_water.value }}</td>
                     <td>{{ current_water.value }}</td>
                     <td>
-                        {% if water_change > 0 %}
+                        {% if water_change == '-' %}
+                            {{ water_change }}
+                        {% elif water_change > 0 %}
                             <span class="up-arrow">↑</span> <span class="weight-value">{{ water_change }}</span>
                         {% elif water_change < 0 %}
                             <span class="down-arrow">↓</span> <span class="weight-value">{{ -water_change }}</span>
@@ -126,7 +136,9 @@
                     <td>{{ last_week_protein.value }}</td>
                     <td>{{ current_protein.value }}</td>
                     <td>
-                        {% if protein_change > 0 %}
+                        {% if protein_change == '-' %}
+                            {{ protein_change }}
+                        {% elif protein_change > 0 %}
                             <span class="up-arrow">↑</span> <span class="weight-value">{{ protein_change }}</span>
                         {% elif protein_change < 0 %}
                             <span class="down-arrow">↓</span> <span class="weight-value">{{ -protein_change }}</span>
@@ -140,7 +152,9 @@
                     <td>{{ last_week_bmr }}</td>
                     <td>{{ current_bmr }}</td>
                     <td>
-                        {% if bmr_change > 0 %}
+                        {% if bmr_change == '-' %}
+                            {{ bmr_change }}
+                        {% elif bmr_change > 0 %}
                             <span class="up-arrow">↑</span> <span class="weight-value">{{ bmr_change }}</span>
                         {% elif bmr_change < 0 %}
                             <span class="down-arrow">↓</span> <span class="weight-value">{{ -bmr_change }}</span>

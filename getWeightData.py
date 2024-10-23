@@ -549,103 +549,134 @@ def get_weekly_data(accessToken,userId,nickname):
     # 获取当前年份和周数
     now = datetime.now()
     year, week, _ = now.isocalendar()
+    
+    # year= 2024
+    # week = 40
+    # print(year, week)
     weekly_url = f"https://restapi.iyunmai.com/healthweekly/ios/weekReport/detail.json?accessToken={accessToken}&userId={userId}&code={code}&signVersion=3&year={year}&week={week-1}"
+    # print(weekly_url)
     response = requests.get(weekly_url)
     json_data = response.json()
     json_data = json_data["data"]
+    
     json_data = json.dumps(json_data, indent=2,ensure_ascii=False)
-    with open(f"weekly_data_{nickname}.json", 'w', encoding="utf-8") as f:
-        f.write(json_data)
-    return(json_data) 
+    if json.loads(json_data):
+        get_weekly_report(json.loads(json_data), nickname)
+    else:
+        print("---无法获取周报数据----")
 
-def get_weekly_report(input_path, user_name, output_path):
-    # 读取 JSON 数据
-    with open(input_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+def get_weekly_report(data, user_name):
+    # print(data)
+    # 本周体重数据
+    weight_data = [entry['weight'] for entry in data['weight']['detail']]
+    weight_data_str = ', '.join(map(str, weight_data))
+     # BMI 和其他指标
+    current_bmi = data['weight']['bmi']
+    
+    # 本周脂肪、肌肉等其他指标
+    weight_change = "-"
+    weight_data = "-"
+ 
+    current_fat = data['weight']['fat']
+    current_muscle = data['weight']['muscle']
+    current_water = data['weight']['water']
+    current_protein = data['weight']['protein']
+    current_bmr = data['weight']['bmr']
+    
+    user_name=user_name
+    
+    # 上周脂肪、肌肉等其他指标
+    
+    last_week_bmi = {"value":"-"}
+    bmi_change = "-"
 
+    last_week_fat = {"value":"-"}
+    fat_change = "-"
+   
+    last_week_muscle = {"value":"-"}
+    muscle_change = "-"
+ 
+    last_week_water = {"value":"-"}
+    water_change = "-"
+    
+    last_week_protein = {"value":"-"}
+    protein_change = "-"
+   
+    last_week_bmr = "-"
+    bmr_change = "-"
+    
     # 提取数据
-    try:
-        current_weight = data['weight']['endWeight']
-    except (KeyError, TypeError) as e:
-        current_weight = None  # 或者设置一个默认值
-    try:
-        last_week_weight = data['lastWeekWeightReport']['endWeight']
-    except (KeyError, TypeError) as e:
-        last_week_weight = None  # 或者设置一个默认值
-    if current_weight and last_week_weight:
+    current_weight = data['weight']['endWeight']
+    lastWeekWeightReport = data.get('lastWeekWeightReport')
         
+    
+    if lastWeekWeightReport:
+        last_week_weight = lastWeekWeightReport['endWeight']
         weight_change = round(current_weight - last_week_weight, 2)
 
-        # 本周体重数据
-        weight_data = [entry['weight'] for entry in data['weight']['detail']]
-        weight_data_str = ', '.join(map(str, weight_data))
-
         # BMI 和其他指标
-        current_bmi = data['weight']['bmi']
-        last_week_bmi = data['lastWeekWeightReport']['bmi']
+
+        last_week_bmi = lastWeekWeightReport['bmi']
         bmi_change = round(current_bmi['value'] - last_week_bmi['value'], 2)
 
         # 脂肪、肌肉等其他指标
-        current_fat = data['weight']['fat']
-        last_week_fat = data['lastWeekWeightReport']['fat']
+
+        last_week_fat = lastWeekWeightReport['fat']
         fat_change = round(current_fat['value'] - last_week_fat['value'], 2)
 
-        current_muscle = data['weight']['muscle']
-        last_week_muscle = data['lastWeekWeightReport']['muscle']
+        last_week_muscle = lastWeekWeightReport['muscle']
         muscle_change = round(current_muscle['value'] - last_week_muscle['value'], 2)
 
-        current_water = data['weight']['water']
-        last_week_water = data['lastWeekWeightReport']['water']
+        last_week_water = lastWeekWeightReport['water']
         water_change = round(current_water['value'] - last_week_water['value'], 2)
 
-        current_protein = data['weight']['protein']
-        last_week_protein = data['lastWeekWeightReport']['protein']
+        last_week_protein = lastWeekWeightReport['protein']
         protein_change = round(current_protein['value'] - last_week_protein['value'], 2)
 
-        current_bmr = data['weight']['bmr']
-        last_week_bmr = data['lastWeekWeightReport']['bmr']
+        last_week_bmr = lastWeekWeightReport['bmr']
         bmr_change = round(current_bmr - last_week_bmr, 2)
 
-        # 处理时间戳
-        start_time = datetime.fromtimestamp(data['startTime']).strftime('%Y/%m/%d')
-        end_time = datetime.fromtimestamp(data['endTime']).strftime('%Y/%m/%d')
-        date_range = f"{start_time}~{end_time}"
+    # 处理时间戳
+    start_time = datetime.fromtimestamp(data['startTime']).strftime('%Y/%m/%d')
+    end_time = datetime.fromtimestamp(data['endTime']).strftime('%Y/%m/%d')
+    date_range = f"{start_time}~{end_time}"
 
-        # 读取模板
-        with open("weekly_template.html", 'r', encoding='utf-8') as f:
-            template = Template(f.read())
+    # 读取模板
+    with open("weekly_template.html", 'r', encoding='utf-8') as f:
+        template = Template(f.read())
 
-        # 渲染模板
-        output = template.render(
-            user_name=user_name,
-            current_weight=current_weight,
-            weight_change=weight_change,
-            weight_data=weight_data_str,
-            current_bmi=current_bmi,
-            last_week_bmi=last_week_bmi,
-            bmi_change=bmi_change,
-            current_fat=current_fat,
-            last_week_fat=last_week_fat,
-            fat_change=fat_change,
-            current_muscle=current_muscle,
-            last_week_muscle=last_week_muscle,
-            muscle_change=muscle_change,
-            current_water=current_water,
-            last_week_water=last_week_water,
-            water_change=water_change,
-            current_protein=current_protein,
-            last_week_protein=last_week_protein,
-            protein_change=protein_change,
-            current_bmr=current_bmr,
-            last_week_bmr=last_week_bmr,
-            bmr_change=bmr_change,
-            date_range=date_range  # 添加日期范围
-        )
+    # 渲染模板
+    output = template.render(
+        user_name=user_name,
+        current_weight=current_weight,
+        weight_change=weight_change,
+        weight_data=weight_data_str,
+        current_bmi=current_bmi,
+        last_week_bmi=last_week_bmi,
+        bmi_change=bmi_change,
+        current_fat=current_fat,
+        last_week_fat=last_week_fat,
+        fat_change=fat_change,
+        current_muscle=current_muscle,
+        last_week_muscle=last_week_muscle,
+        muscle_change=muscle_change,
+        current_water=current_water,
+        last_week_water=last_week_water,
+        water_change=water_change,
+        current_protein=current_protein,
+        last_week_protein=last_week_protein,
+        protein_change=protein_change,
+        current_bmr=current_bmr,
+        last_week_bmr=last_week_bmr,
+        bmr_change=bmr_change,
+        date_range=date_range  # 添加日期范围
+    )
 
-        # 保存为 HTML 文件
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(output)
-    os.remove(input_path)
+    # 保存为 HTML 文件
+    output_path =f"./weekly_report_{user_name}.html"
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(output)
+    # os.remove(input_path)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -671,7 +702,7 @@ if __name__ == "__main__":
                     user["nickname"], float(user["height"]), 
                     user["garmin_account"], user["garmin_password"],
                     isOnline,local_list)
-        get_weekly_report(f"weekly_data_{user['nickname']}.json", user['nickname'], f"weekly_report_{user['nickname']}.html")
+        # get_weekly_report(f"weekly_data_{user['nickname']}.json", user['nickname'], f"weekly_report_{user['nickname']}.html")
         if isOnline == 1:
             zipUserFile(user["account"], "./static/result")
         if os.path.exists(f'{old_file}BAK'):
