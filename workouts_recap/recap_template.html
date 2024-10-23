@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Activity Data</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #main {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="main"></div>
+    <script>
+        var myChart = echarts.init(document.getElementById('main'));
+
+        var option = {
+            // title: {
+            //     text: '骑行、跑步距离汇总'
+            // },
+            tooltip: {},
+            legend: {
+                data: ['骑行', '跑步', '徒步']
+            },
+            xAxis: {
+                data: {{ months | tojson }}
+            },
+            yAxis: {
+            type: "value",
+            scale: true,
+            name: "{{title}}",
+            position: "left",
+            alignTicks: true,
+            axisLine: {
+              show: true,
+            },
+            axisLabel: {
+              formatter: "{value}{{unit}}",
+            },
+          },
+            series: [{
+                name: '骑行',
+                type: 'bar',
+                data: {{ cycling | tojson }}
+            }, {
+                name: '跑步',
+                type: 'bar',
+                data: {{ running | tojson }}
+            }, {
+                name: '徒步',
+                type: 'bar',
+                data: {{ hiking | tojson }}
+            }]
+        };
+
+        myChart.setOption(option);
+    </script>
+</body>
+</html>

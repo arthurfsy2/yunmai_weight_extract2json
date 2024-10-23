@@ -568,9 +568,12 @@ def get_weekly_report(input_path, user_name, output_path):
         current_weight = data['weight']['endWeight']
     except (KeyError, TypeError) as e:
         current_weight = None  # 或者设置一个默认值
-
-    if current_weight:
+    try:
         last_week_weight = data['lastWeekWeightReport']['endWeight']
+    except (KeyError, TypeError) as e:
+        last_week_weight = None  # 或者设置一个默认值
+    if current_weight and last_week_weight:
+        
         weight_change = round(current_weight - last_week_weight, 2)
 
         # 本周体重数据

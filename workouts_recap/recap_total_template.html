@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annual Activity Data</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .chart-container {
+            width: 100%;
+            height: 300px; /* 可以根据需要调整高度 */
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="charts">
+        <div id="distance-chart" class="chart-container"></div>
+        <div id="elevationGain-chart" class="chart-container"></div>
+        <div id="duration-chart" class="chart-container"></div>
+    </div>
+    
+    <script>
+        
+        var distanceChart = echarts.init(document.getElementById('distance-chart'));
+    
+        var distanceOption = {
+            title: {
+                text: '距离汇总',
+                left:'middle'
+            },
+            tooltip: {},
+            legend: {
+        orient: 'vertical',
+        right: '10%',  // 控制距离右边的距离
+        top: 'center',  // 垂直居中
+        data: ['骑行', '跑步', '徒步']
+    },
+            xAxis: {
+                data: distance_months
+            },
+            yAxis: {
+                type: "value",
+                scale: true,
+                name: "distance_title",
+                position: "left",
+                alignTicks: true,
+                axisLine: {
+                    show: true,
+                },
+                axisLabel: {
+                    formatter: "{value}distance_unit",
+                },
+            },
+            series: [{
+                name: '骑行',
+                type: 'bar',
+                data: distance_cycling
+            }, {
+                name: '跑步',
+                type: 'bar',
+                data: distance_running
+            }, {
+                name: '徒步',
+                type: 'bar',
+                data: distance_hiking
+            }]
+        };
+    
+        distanceChart.setOption(distanceOption);
+        
+        var elevationGainChart = echarts.init(document.getElementById('elevationGain-chart'));
+    
+        var elevationGainOption = {
+            title: {
+                text: '总爬升汇总',
+                left:'middle'
+            },
+            tooltip: {},
+            legend: {
+        orient: 'vertical',
+        right: '10%',  // 控制距离右边的距离
+        top: 'center',  // 垂直居中
+        data: ['骑行', '跑步', '徒步']
+    },
+            xAxis: {
+                data: elevationGain_months
+            },
+            yAxis: {
+                type: "value",
+                scale: true,
+                name: "elevationGain_title",
+                position: "left",
+                alignTicks: true,
+                axisLine: {
+                    show: true,
+                },
+                axisLabel: {
+                    formatter: "{value}elevationGain_unit",
+                },
+            },
+            series: [{
+                name: '骑行',
+                type: 'bar',
+                data: elevationGain_cycling
+            }, {
+                name: '跑步',
+                type: 'bar',
+                data: elevationGain_running
+            }, {
+                name: '徒步',
+                type: 'bar',
+                data: elevationGain_hiking
+            }]
+        };
+    
+        elevationGainChart.setOption(elevationGainOption);
+        
+        var durationChart = echarts.init(document.getElementById('duration-chart'));
+    
+        var durationOption = {
+            title: {
+                text: '总时间汇总',
+                left:'middle'
+            },
+            tooltip: {},
+            legend: {
+        orient: 'vertical',
+        right: '10%',  // 控制距离右边的距离
+        top: 'center',  // 垂直居中
+        data: ['骑行', '跑步', '徒步']
+    },
+            xAxis: {
+                data: duration_months
+            },
+            yAxis: {
+                type: "value",
+                scale: true,
+                name: "duration_title",
+                position: "left",
+                alignTicks: true,
+                axisLine: {
+                    show: true,
+                },
+                axisLabel: {
+                    formatter: "{value}duration_unit",
+                },
+            },
+            series: [{
+                name: '骑行',
+                type: 'bar',
+                data: duration_cycling
+            }, {
+                name: '跑步',
+                type: 'bar',
+                data: duration_running
+            }, {
+                name: '徒步',
+                type: 'bar',
+                data: duration_hiking
+            }]
+        };
+    
+        durationChart.setOption(durationOption);
+        
+    </script>
+</body>
+</html>
