@@ -127,17 +127,17 @@
     </div>
 
     <script>
-        var chartDom = document.getElementById('weightChart_fsy');
-        var myChart = echarts.init(chartDom);
+        var fsychartDom = document.getElementById('weightChart_fsy');
+        var fsymyChart = echarts.init(fsychartDom);
         
         // 提取体重数据
-        var weightData = [74.46, 74.44, 74.29, 73.92, 73.93];
+        var fsyweightData = [74.46, 74.44, 74.29, 73.92, 73.93];
         
         // 动态设置 y 轴的最小值和最大值
-        var minWeight = Math.min(...weightData) - 1;
-        var maxWeight = Math.max(...weightData) + 1;
+        var fsyminWeight = Math.min(...fsyweightData) - 1;
+        var fsymaxWeight = Math.max(...fsyweightData) + 1;
 
-        var option = {
+        var fsyoption = {
             title: {
                 text: '本周体重变化趋势',
                 left: 'center'
@@ -156,16 +156,16 @@
             yAxis: {
                 type: 'value',
                 name: '体重 (公斤)',
-                min: minWeight,
-                max: maxWeight
+                min: fsyminWeight,
+                max: fsymaxWeight
             },
             series: [{
-                data: weightData,
+                data: fsyweightData,
                 type: 'line',
                 smooth: true
             }]
         };
-        myChart.setOption(option);
+        fsymyChart.setOption(fsyoption);
     </script>
 </body>
 </html>

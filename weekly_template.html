@@ -169,17 +169,17 @@
     </div>
 
     <script>
-        var chartDom = document.getElementById('weightChart_{{user_name}}');
-        var myChart = echarts.init(chartDom);
+        var {{user_name}}chartDom = document.getElementById('weightChart_{{user_name}}');
+        var {{user_name}}myChart = echarts.init({{user_name}}chartDom);
         
         // 提取体重数据
-        var weightData = [{{ weight_data }}];
+        var {{user_name}}weightData = [{{ weight_data }}];
         
         // 动态设置 y 轴的最小值和最大值
-        var minWeight = Math.min(...weightData) - 1;
-        var maxWeight = Math.max(...weightData) + 1;
+        var {{user_name}}minWeight = Math.min(...{{user_name}}weightData) - 1;
+        var {{user_name}}maxWeight = Math.max(...{{user_name}}weightData) + 1;
 
-        var option = {
+        var {{user_name}}option = {
             title: {
                 text: '本周体重变化趋势',
                 left: 'center'
@@ -198,16 +198,16 @@
             yAxis: {
                 type: 'value',
                 name: '体重 (公斤)',
-                min: minWeight,
-                max: maxWeight
+                min: {{user_name}}minWeight,
+                max: {{user_name}}maxWeight
             },
             series: [{
-                data: weightData,
+                data: {{user_name}}weightData,
                 type: 'line',
                 smooth: true
             }]
         };
-        myChart.setOption(option);
+        {{user_name}}myChart.setOption({{user_name}}option);
     </script>
 </body>
 </html>

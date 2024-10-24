@@ -44,10 +44,10 @@
                 <h2>与上周相比</h2>
                 <p>
                     
-                        <span class="down-arrow">↓</span> <span class="weight-value">0.94</span>
+                        <span class="down-arrow">↓</span> <span class="weight-value">0.94公斤</span>
                     
-                    公斤
-                </p>
+                    
+                </p>                
             </div>
         </div>
         <div id="weightChart_wyf" class="chart"></div>
@@ -69,7 +69,7 @@
                         
                             <span class="down-arrow">↓</span> <span class="weight-value">0.3</span>
                         
-                    </td>
+                    </td>                    
                 </tr>
                 <tr>
                     <td>脂肪(%)</td>
@@ -127,17 +127,17 @@
     </div>
 
     <script>
-        var chartDom = document.getElementById('weightChart_wyf');
-        var myChart = echarts.init(chartDom);
+        var wyfchartDom = document.getElementById('weightChart_wyf');
+        var wyfmyChart = echarts.init(wyfchartDom);
         
         // 提取体重数据
-        var weightData = [63.28, 63.78, 63.13, 62.92, 62.93];
+        var wyfweightData = [63.28, 63.78, 63.13, 62.92, 62.93];
         
         // 动态设置 y 轴的最小值和最大值
-        var minWeight = Math.min(...weightData) - 1;
-        var maxWeight = Math.max(...weightData) + 1;
+        var wyfminWeight = Math.min(...wyfweightData) - 1;
+        var wyfmaxWeight = Math.max(...wyfweightData) + 1;
 
-        var option = {
+        var wyfoption = {
             title: {
                 text: '本周体重变化趋势',
                 left: 'center'
@@ -156,16 +156,16 @@
             yAxis: {
                 type: 'value',
                 name: '体重 (公斤)',
-                min: minWeight,
-                max: maxWeight
+                min: wyfminWeight,
+                max: wyfmaxWeight
             },
             series: [{
-                data: weightData,
+                data: wyfweightData,
                 type: 'line',
                 smooth: true
             }]
         };
-        myChart.setOption(option);
+        wyfmyChart.setOption(wyfoption);
     </script>
 </body>
 </html>

@@ -551,7 +551,7 @@ def get_weekly_data(accessToken,userId,nickname):
     year, week, _ = now.isocalendar()
     
     # year= 2024
-    # week = 40
+    # week = 43
     # print(year, week)
     weekly_url = f"https://restapi.iyunmai.com/healthweekly/ios/weekReport/detail.json?accessToken={accessToken}&userId={userId}&code={code}&signVersion=3&year={year}&week={week-1}"
     # print(weekly_url)
@@ -562,8 +562,9 @@ def get_weekly_data(accessToken,userId,nickname):
     json_data = json.dumps(json_data, indent=2,ensure_ascii=False)
     if json.loads(json_data):
         get_weekly_report(json.loads(json_data), nickname)
+        print(f"已生成{year}年第{week-1}周的周报数据")
     else:
-        print("---无法获取周报数据----")
+        print(f"无法获取{year}年第{week-1}周的周报数据")
 
 def get_weekly_report(data, user_name):
     # print(data)
