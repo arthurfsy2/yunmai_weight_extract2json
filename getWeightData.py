@@ -240,15 +240,26 @@ def getUserData(accessToken, payload, userId_real, account, nickname, height, is
         return round(avg, 2)
     average = str(round(get_avg([item['weight'] for item in weight_data]), 2))
     pieces = get_BMI_status(height)
-    template_path = os.path.join(dir_path, 'template.html')
+    template_path = os.path.join(dir_path, 'weight_report_template.html')
+    
+    # 读取模板
     with open(template_path, 'r', encoding="utf-8") as f:
-        data = f.read()
-        dataNew = data.replace("$weight$", weight).replace(
-            "$createTime$", createTime).replace(
-            "$nickname$", nickname).replace(
-            "$average$", average).replace(
-            "$pieces$", pieces)
-    dataNew = generate_report(dataNew, weight_data, nickname)
+        template = Template(f.read())
+    latest_desc, max_weight_desc, min_weight_desc, report_lines_by_months, report_lines_by_years = generate_report(weight_data)
+    # 渲染模板
+    dataNew = template.render(
+        weight=weight,
+        createTime=createTime,
+        nickname=nickname,
+        average=average,
+        pieces=pieces,
+        latest_desc=latest_desc,
+        max_weight_desc=max_weight_desc,
+        min_weight_desc=min_weight_desc,
+        report_lines_by_months=report_lines_by_months,
+        report_lines_by_years=report_lines_by_years,
+    )
+    
     if isOnline == 1:
         html_name = f'./static/result/{account}_weight.html'
     else:
@@ -473,7 +484,7 @@ def calculate_years_difference(latest_date, oldest_date):
     years_difference = latest_datetime.year - oldest_datetime.year
     return years_difference
 
-def generate_report(template, data, nickname):
+def generate_report(data):
     latest_date = max(data, key=lambda x: x['timeStamp'])
     oldest_date = min(data, key=lambda x: x['timeStamp'])
     max_weight_data = max(data, key=lambda x: x['weight'])
@@ -515,18 +526,22 @@ def generate_report(template, data, nickname):
             report_lines_by_years.append(
                 f"<tr><td>{label}</td><td>{closest_entry['syncTime']}</td><td>{closest_entry['weight']} kg</td><td>{weight_diff:.2f} kg</td><td>{lose_percent:.2f} %</td></tr>"
             )
-
-    template = template.replace("{{nickname}}",nickname)
-    template = template.replace("{{最近称重}}",f"{latest_date['weight']} kg | {latest_date['syncTime']}")
-
-    template = template.replace("{{历史最重}}",f"{max_weight_data['weight']} kg | {max_weight_data['syncTime']}")
-
-    template = template.replace("{{历史最轻}}",f"{min_weight_data['weight']} kg | {min_weight_data['syncTime']}")
-
-    template = template.replace("{{report_lines_by_months}}","\n".join(report_lines_by_months))
-    template = template.replace("{{report_lines_by_years}}","\n".join(report_lines_by_years))
+    # 假设 data 是一个包含 N 个类似 latest_date 的字典项的列表
+    weight_to_rank = latest_date["weight"]
+    # weight_to_rank = 64.85
+    # 计算排名
+    rank = 0  # 初始排名
+    for item in data:
+        if item["weight"] > weight_to_rank:
+            rank += 1  # 如果发现 weight 大于最新的 weight，排名加 1
+    rank_percent = f"{round((len(data) - rank)/len(data)*100,2)}"
+    latest_desc = f'{latest_date['weight']} kg | {latest_date['syncTime']} | <img src="https://img.shields.io/badge/TOP-{rank_percent}%25-blue" height="20">'
+    max_weight_desc = f"{max_weight_data['weight']} kg | {max_weight_data['syncTime']}"
+    min_weight_desc = f"{min_weight_data['weight']} kg | {min_weight_data['syncTime']}"
+    report_lines_by_months = "\n".join(report_lines_by_months)
+    report_lines_by_years = "\n".join(report_lines_by_years)
     
-    return template
+    return latest_desc, max_weight_desc, min_weight_desc, report_lines_by_months, report_lines_by_years
 
 def read_json_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:

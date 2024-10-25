@@ -22,9 +22,9 @@
     <div class="container-fluid">
       <h1 class="text-center mb-4">{{nickname}} 体重数据统计</h1>
       <ul class="list-group">
-        <li class="list-group-item">最近称重：<b>{{最近称重}}</b></li>
-        <li class="list-group-item">历史最重：<b>{{历史最重}}</b></li>
-        <li class="list-group-item">历史最轻：<b>{{历史最轻}}</b></li>
+        <li class="list-group-item">最近称重：<b>{{latest_desc}}</b></li>
+        <li class="list-group-item">历史最重：<b>{{max_weight_desc}}</b></li>
+        <li class="list-group-item">历史最轻：<b>{{min_weight_desc}}</b></li>
       </ul>
     </div>
     <div class="container-fluid2">
@@ -86,14 +86,14 @@
         },
         xAxis: [
           {
-            data: $createTime$,
+            data: {{createTime}},
           },
         ],
         yAxis: [
           {
             type: "value",
             scale: true,
-            name: "$nickname$体重",
+            name: "{{nickname}}体重",
             position: "left",
             alignTicks: true,
             axisLine: {
@@ -125,7 +125,7 @@
             top: 50,
             right: 10,
 
-            pieces: [$pieces$],
+            pieces: [{{pieces}}],
             outOfRange: {
               color: "#999",
             },
@@ -133,13 +133,13 @@
         ],
         series: [
           {
-            name: "$nickname$体重",
+            name: "{{nickname}}体重",
             type: "line",
             xAxisIndex: 0,
             yAxisIndex: 0,
             symbol: "none",
             smooth: true,
-            data: $weight$,
+            data: {{weight}},
 
             markLine: {
               silent: false,
@@ -148,11 +148,11 @@
               },
               data: [
                 {
-                  yAxis: $average$,
+                  yAxis: {{average}},
                   label: {
                     show: true,
                     position: "end",
-                    formatter: "历史平均：$average$ kg",
+                    formatter: "历史平均：{{average}} kg",
                   },
                 },
               ],
