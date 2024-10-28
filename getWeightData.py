@@ -566,7 +566,7 @@ def get_weekly_data(accessToken,userId,nickname):
     year, week, _ = now.isocalendar()
     
     # year= 2024
-    # week = 43
+    # week = 39
     # print(year, week)
     weekly_url = f"https://restapi.iyunmai.com/healthweekly/ios/weekReport/detail.json?accessToken={accessToken}&userId={userId}&code={code}&signVersion=3&year={year}&week={week-1}"
     # print(weekly_url)
