@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单滚动条Iframe示例</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;  /* 水平居中 */
+            align-items: center;      /* 垂直居中 */
+            overflow: hidden;         /* 隐藏外部滚动条 */
+        }
+
+        iframe {
+            width: 430px;
+            height: 932px;
+            border: none;
+            overflow: hidden;         /* 隐藏内部滚动条 */
+        }
+    </style>
+</head>
+<body>
+    <iframe 
+        src="https://sq.iyunmai.com/health-weekly/details/?accessToken=d1c1d9c98b4b4e8b993ba433c89f4803&userId=101011281&code=1730105400&signVersion=3&year=2024&week=43"
+        title="健康周报"
+        ></iframe> <!-- 不显示滚动条 -->
+</body>
+</html>

@@ -577,6 +577,7 @@ def get_weekly_data(accessToken,userId,nickname):
     json_data = json.dumps(json_data, indent=2,ensure_ascii=False)
     if json.loads(json_data):
         get_weekly_report(json.loads(json_data), nickname)
+        get_weekly_report2(accessToken, userId, code, year, week-1, nickname)
         print(f"已生成{year}年第{week-1}周的周报数据")
     else:
         print(f"无法获取{year}年第{week-1}周的周报数据")
@@ -693,6 +694,22 @@ def get_weekly_report(data, user_name):
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(output)
     # os.remove(input_path)
+
+def get_weekly_report2(accessToken, userId, code, year, week, user_name):
+    weekly_report_url = f"https://sq.iyunmai.com/health-weekly/details/?accessToken={accessToken}&userId={userId}&code={code}&signVersion=3&year={year}&week={week}"
+    # 读取模板
+    with open("weekly_template2.html", 'r', encoding='utf-8') as f:
+        template = Template(f.read())
+
+    # 渲染模板
+    output = template.render(
+        weekly_report_url=weekly_report_url,
+    )
+
+    # 保存为 HTML 文件
+    output_path =f"./weekly_report_{user_name}_v2.html"
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(output)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
