@@ -283,7 +283,7 @@ def getUserInfo(account, password, nickname, height, garmin_account, garmin_pass
     weight_data = getUserData(accessToken, payload, userId_real,
                 account, nickname, height, isOnline)
     online_list = [item["timeStamp"] for item in weight_data]
-    get_weekly_data(accessToken,userId_real,nickname)
+    get_weekly_data(accessToken,userId_real,nickname,account)
     if local_list:
         filtered_data = [item for item in weight_data if item["timeStamp"] not in local_list]
     if garmin_account and garmin_password:
@@ -558,7 +558,7 @@ def save_html_report(nickname, template, report_content, output_file_path):
     with open(output_file_path, 'w', encoding='utf-8') as file:
         file.write(html_content)
 
-def get_weekly_data(accessToken,userId,nickname):
+def get_weekly_data(accessToken,userId,nickname,account):
     timestamp = str(int(time.time()))
     code = timestamp[:8] + "00"
     # 获取当前年份和周数
@@ -576,13 +576,13 @@ def get_weekly_data(accessToken,userId,nickname):
     
     json_data = json.dumps(json_data, indent=2,ensure_ascii=False)
     if json.loads(json_data):
-        get_weekly_report(json.loads(json_data), nickname)
-        get_weekly_report2(accessToken, userId, code, year, week-1, nickname)
+        get_weekly_report(json.loads(json_data), nickname, account)
+        get_weekly_report2(accessToken, userId, code, year, week-1, nickname, account)
         print(f"已生成{year}年第{week-1}周的周报数据")
     else:
         print(f"无法获取{year}年第{week-1}周的周报数据")
 
-def get_weekly_report(data, user_name):
+def get_weekly_report(data, nickname, account):
     # print(data)
     # 本周体重数据
     weight_data = [entry['weight'] for entry in data['weight']['detail']]
@@ -600,7 +600,7 @@ def get_weekly_report(data, user_name):
     current_protein = data['weight']['protein']
     current_bmr = data['weight']['bmr']
     
-    user_name=user_name
+    user_name = nickname
     
     # 上周脂肪、肌肉等其他指标
     
@@ -690,12 +690,16 @@ def get_weekly_report(data, user_name):
     )
 
     # 保存为 HTML 文件
-    output_path =f"./weekly_report_{user_name}.html"
+    if isOnline == 1:
+        output_path = f'./static/result/{account}_weekly.html'
+    else:
+        output_path =f"./weekly_report_{nickname}.html"
+    
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(output)
     # os.remove(input_path)
 
-def get_weekly_report2(accessToken, userId, code, year, week, user_name):
+def get_weekly_report2(accessToken, userId, code, year, week, nickname, account):
     weekly_report_url = f"https://sq.iyunmai.com/health-weekly/details/?accessToken={accessToken}&userId={userId}&code={code}&signVersion=3&year={year}&week={week}"
     # 读取模板
     with open("weekly_template2.html", 'r', encoding='utf-8') as f:
@@ -707,7 +711,11 @@ def get_weekly_report2(accessToken, userId, code, year, week, user_name):
     )
 
     # 保存为 HTML 文件
-    output_path =f"./weekly_report_{user_name}_v2.html"
+    if isOnline == 1:
+        output_path = f'./static/result/{account}_weekly_v2.html'
+    else:
+        output_path =f"./weekly_report_{nickname}_v2.html"
+    
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(output)
 
@@ -735,7 +743,6 @@ if __name__ == "__main__":
                     user["nickname"], float(user["height"]), 
                     user["garmin_account"], user["garmin_password"],
                     isOnline,local_list)
-        # get_weekly_report(f"weekly_data_{user['nickname']}.json", user['nickname'], f"weekly_report_{user['nickname']}.html")
         if isOnline == 1:
             zipUserFile(user["account"], "./static/result")
         if os.path.exists(f'{old_file}BAK'):
