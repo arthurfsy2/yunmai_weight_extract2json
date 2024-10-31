@@ -11,8 +11,8 @@
 
 # 使用方法（前端）：
 
-1. 通过`pip install -r requirements.txt`安装依赖
-2. 通过`py a.py`执行前端程序，如果顺利的话，命令行可以看到“Running on http://XXX:4568”
+1. 通过 `pip install -r requirements.txt`安装依赖
+2. 通过 `py a.py`执行前端程序，如果顺利的话，命令行可以看到“Running on http://XXX:4568”
 3. 浏览器打开本地 IP 地址："http://XXX:4568/static/index.html"，然后根据界面提示操作即可导出数据。
 4. 前端生成的数据，可在./static 路径下查看
 
@@ -28,9 +28,9 @@
 单个举例：`python getWeightData.py "186XXXXX123/12xxx4/nickname1/1.8"`
 
 > 如果需要同步体重到佳明（cn），可在参数最后添加佳明的账号密码，如“你的手机号/密码/自定义的昵称/身高（米）/佳明账号/佳明密码”
-单个举例：`python getWeightData.py "186XXXXX123/12xxx4/nickname1/1.8/arxxxxy/XXXXX"`
+> 单个举例：`python getWeightData.py "186XXXXX123/12xxx4/nickname1/1.8/arxxxxy/XXXXX"`
 
-如果账号、密码无误的话，当 getWeightData.py 正常运行后，会在当前生成 `weight*自定义昵称.json`，记录了该账号的体重信息。如果输入了多个账号的信息，则批量生成 weight\_自定义昵称.json 文件
+如果账号、密码无误的话，当 getWeightData.py 正常运行后，会在当前生成 `weight_自定义昵称.json`，记录了该账号的体重信息。如果输入了多个账号的信息，则批量生成 `weight_自定义昵称.json` 文件
 
 # Github Action
 
@@ -80,4 +80,4 @@ on:
 
 ## 2、可通过 echarts 表格引入该 json 文件画出图表。
 
-详见：[获取云麦好轻体重数据并在 vuepress 上通过 echarts 折线图展示](https://blog.4a1801.life/%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/IT%E6%80%BB%E7%BB%93/%E8%8E%B7%E5%8F%96%E4%BA%91%E9%BA%A6%E5%A5%BD%E8%BD%BB%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%9C%A8vuepress%E4%B8%8A%E5%B1%95%E7%A4%BA.html)
+详见：[获取云麦好轻体重数据并在vuepress上通过echarts折线图展示](https://fengsy.cn/%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/IT%E6%80%BB%E7%BB%93/vuepress/%E8%8E%B7%E5%8F%96%E4%BA%91%E9%BA%A6%E5%A5%BD%E8%BD%BB%E4%BD%93%E9%87%8D%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%9C%A8vuepress%E4%B8%8A%E9%80%9A%E8%BF%87echarts%E6%8A%98%E7%BA%BF%E5%9B%BE%E5%B1%95%E7%A4%BA.html)
