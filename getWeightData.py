@@ -129,29 +129,8 @@ class WeightDataFetcher:
         return weight_data
 
 
-def getUserData(accessToken, payload, userId_real, account, nickname, height, isOnline):
-    code = str(int(time.time()))
-    startTime = str(
-        int(time.time()) - 9999 * 24 * 60 * 60
-    )  # 取当前时间前9999天为需要截取的时间段
-    data_url = f"https://data.iyunmai.com/api/ios/scale/chart-list.json?code={code}&signVersion=3&startTime={startTime}&userId={userId_real}&versionCode=2"
-    # 1. 构建chart-list.json请求头
-    data_headers = {
-        "Host": "account.iyunmai.com",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept-Encoding": "gzip",
-        "Connection": "keep-alive",
-        "Accept": "*/*",
-        "User-Agent": "google/android(10,29) channel(huawei) app(4.25,42500010)screen(w,h=1080,1794)/scale",
-        "accessToken": accessToken,
-        "IssignV1": "open",
-        "Accept-Language": "zh-Hans-CN;q=1, en-CN;q=0.9",
-    }
-    # 2. 获取体重数据
-    response = requests.get(data_url, headers=data_headers, data=payload)
-    getWeight_stat = response.json()
-    # 3. 解析体重数据并保存
-    weight_data = getWeight_stat["data"]["rows"]
+def get_user_report(weight_data, account, nickname, height, isOnline):
+
     json_data = json.dumps(weight_data, indent=2)
     # print(f"weight_data: {weight_data}\n\n")
     if isOnline == 1:
@@ -206,7 +185,6 @@ def getUserData(accessToken, payload, userId_real, account, nickname, height, is
     with open(html_name, "w", encoding="utf-8") as f:
         f.write(dataNew)
     print(f"已生成{html_name}")
-    return weight_data
 
 
 def getUserInfo(
@@ -235,6 +213,7 @@ def getUserInfo(
             upload_to_garmin(garmin_account, garmin_password, filtered_data)
         else:
             print("garmin已是最新体重记录")
+    get_user_report(weight_data, account, nickname, height, isOnline)
 
 
 def get_BMI_status(h):
