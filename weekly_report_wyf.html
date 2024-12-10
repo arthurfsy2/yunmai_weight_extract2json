@@ -34,17 +34,17 @@
 <body>
     <div class="container">
         <h1 class="header">wyf 体重周报</h1>
-        <h3 class="header">2024/11/18~2024/11/24</h3>
+        <h3 class="header">2024/12/02~2024/12/08</h3>
         <div class="weight-summary">
             <div class="weight-container">
                 <h2>本周最终体重</h2>
-                <p>62.85 公斤</p>
+                <p>63.8 公斤</p>
             </div>
             <div class="weight-container">
                 <h2>与上周相比</h2>
                 <p>
                     
-                        <span class="down-arrow">↓</span> <span class="weight-value">0.61公斤</span>
+                        <span class="up-arrow">↑</span> <span class="weight-value">0.51公斤</span>
                     
                     
                 </p>                
@@ -131,7 +131,7 @@
         var wyfmyChart = echarts.init(wyfchartDom);
         
         // 提取体重数据
-        var wyfweightData = [62.79, 63.36, 63.28, 62.88, 62.52, 62.85];
+        var wyfweightData = [63.87, 64.04, 63.69, 63.37, 63.8];
         
         // 动态设置 y 轴的最小值和最大值
         var wyfminWeight = Math.min(...wyfweightData) - 1;

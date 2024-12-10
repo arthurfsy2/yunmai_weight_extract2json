@@ -34,17 +34,17 @@
 <body>
     <div class="container">
         <h1 class="header">fsy 体重周报</h1>
-        <h3 class="header">2024/11/18~2024/11/24</h3>
+        <h3 class="header">2024/12/02~2024/12/08</h3>
         <div class="weight-summary">
             <div class="weight-container">
                 <h2>本周最终体重</h2>
-                <p>73.83 公斤</p>
+                <p>76.13 公斤</p>
             </div>
             <div class="weight-container">
                 <h2>与上周相比</h2>
                 <p>
                     
-                        <span class="up-arrow">↑</span> <span class="weight-value">0.64公斤</span>
+                        <span class="up-arrow">↑</span> <span class="weight-value">2.17公斤</span>
                     
                     
                 </p>                
@@ -63,48 +63,48 @@
             <tbody>
                 <tr>
                     <td>BMI</td>
-                    <td>22.3</td>
-                    <td>22.5</td>
+                    <td>22.6</td>
+                    <td>23.2</td>
                     <td>
                         
-                            <span class="up-arrow">↑</span> <span class="weight-value">0.2</span>
+                            <span class="up-arrow">↑</span> <span class="weight-value">0.6</span>
                         
                     </td>                    
                 </tr>
                 <tr>
                     <td>脂肪(%)</td>
-                    <td>17.9</td>
                     <td>18.2</td>
+                    <td>19.2</td>
                     <td>
                         
-                            <span class="up-arrow">↑</span> <span class="weight-value">0.3</span>
+                            <span class="up-arrow">↑</span> <span class="weight-value">1.0</span>
                         
                     </td>
                 </tr>
                 <tr>
                     <td>肌肉(%)</td>
-                    <td>55.0</td>
                     <td>54.8</td>
+                    <td>54.1</td>
                     <td>
                         
-                            <span class="down-arrow">↓</span> <span class="weight-value">0.2</span>
+                            <span class="down-arrow">↓</span> <span class="weight-value">0.7</span>
                         
                     </td>
                 </tr>
                 <tr>
                     <td>水分(%)</td>
-                    <td>59.6</td>
                     <td>59.4</td>
+                    <td>58.7</td>
                     <td>
                         
-                            <span class="down-arrow">↓</span> <span class="weight-value">0.2</span>
+                            <span class="down-arrow">↓</span> <span class="weight-value">0.7</span>
                         
                     </td>
                 </tr>
                 <tr>
                     <td>蛋白质(%)</td>
-                    <td>17.3</td>
-                    <td>17.2</td>
+                    <td>17.1</td>
+                    <td>17.0</td>
                     <td>
                         
                             <span class="down-arrow">↓</span> <span class="weight-value">0.1</span>
@@ -113,11 +113,11 @@
                 </tr>
                 <tr>
                     <td>基础代谢率</td>
-                    <td>1667.0</td>
-                    <td>1674.0</td>
+                    <td>1676.0</td>
+                    <td>1698.0</td>
                     <td>
                         
-                            <span class="up-arrow">↑</span> <span class="weight-value">7.0</span>
+                            <span class="up-arrow">↑</span> <span class="weight-value">22.0</span>
                         
                     </td>
                 </tr>
@@ -131,7 +131,7 @@
         var fsymyChart = echarts.init(fsychartDom);
         
         // 提取体重数据
-        var fsyweightData = [72.85, 73.56, 73.78, 73.08, 73.36, 72.72, 73.83];
+        var fsyweightData = [74.77, 74.91, 74.95, 74.24, 74.45, 74.84, 76.13];
         
         // 动态设置 y 轴的最小值和最大值
         var fsyminWeight = Math.min(...fsyweightData) - 1;
