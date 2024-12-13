@@ -136,11 +136,12 @@ def get_user_report(weight_data, account, nickname, height, isOnline):
     if isOnline == 1:
         weight_nicname_path = f"./static/result/{account}_weight.json"
     else:
-        weight_nicname_path = f"./weight_{nickname}.json"
+        weight_nicname_path = os.path.join(BIN, "output", f"weight_{nickname}.json")
     with open(weight_nicname_path, "w", encoding="utf-8") as f:
         f.write(json_data)
         print(f"{weight_nicname_path}写入成功！")
         print("————————————————————")
+
     weight = json.dumps([item["weight"] for item in weight_data])
     createTime = json.dumps(
         [item["createTime"] for item in weight_data]
@@ -152,7 +153,7 @@ def get_user_report(weight_data, account, nickname, height, isOnline):
 
     average = str(round(get_avg([item["weight"] for item in weight_data]), 2))
     pieces = get_BMI_status(height)
-    template_path = os.path.join(BIN, "weight_report_template.html")
+    template_path = os.path.join(BIN, "template", "weight_report_template.html")
 
     # 读取模板
     with open(template_path, "r", encoding="utf-8") as f:
@@ -181,7 +182,7 @@ def get_user_report(weight_data, account, nickname, height, isOnline):
     if isOnline == 1:
         html_name = f"./static/result/{account}_weight.html"
     else:
-        html_name = f"./weight_report_{nickname}.html"
+        html_name = os.path.join(BIN, "output", f"weight_report_{nickname}.html")
     with open(html_name, "w", encoding="utf-8") as f:
         f.write(dataNew)
     print(f"已生成{html_name}")
@@ -609,7 +610,9 @@ def get_weekly_report(data, nickname, account):
     date_range = f"{start_time}~{end_time}"
 
     # 读取模板
-    with open("weekly_template.html", "r", encoding="utf-8") as f:
+    with open(
+        os.path.join(BIN, "template", "weekly_template.html"), "r", encoding="utf-8"
+    ) as f:
         template = Template(f.read())
 
     # 渲染模板
@@ -643,7 +646,7 @@ def get_weekly_report(data, nickname, account):
     if isOnline == 1:
         output_path = f"./static/result/{account}_weekly.html"
     else:
-        output_path = f"./weekly_report_{nickname}.html"
+        output_path = os.path.join(BIN, "output", f"weekly_report_{nickname}.html")
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(output)
@@ -653,7 +656,9 @@ def get_weekly_report(data, nickname, account):
 def get_weekly_report2(accessToken, userId, code, year, week, nickname, account):
     weekly_report_url = f"https://sq.iyunmai.com/health-weekly/details/?accessToken={accessToken}&userId={userId}&code={code}&signVersion=3&year={year}&week={week}"
     # 读取模板
-    with open("weekly_template2.html", "r", encoding="utf-8") as f:
+    with open(
+        os.path.join(BIN, "template", "weekly_template2.html"), "r", encoding="utf-8"
+    ) as f:
         template = Template(f.read())
 
     # 渲染模板
@@ -665,7 +670,7 @@ def get_weekly_report2(accessToken, userId, code, year, week, nickname, account)
     if isOnline == 1:
         output_path = f"./static/result/{account}_weekly_v2.html"
     else:
-        output_path = f"./weekly_report_{nickname}_v2.html"
+        output_path = os.path.join(BIN, "output", f"weekly_report_{nickname}_v2.html")
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(output)
@@ -686,7 +691,7 @@ if __name__ == "__main__":
     users = parse_string(input_string)
     # print(users)
     for user in users:
-        old_file = f'./weight_{user["nickname"]}.json'
+        old_file = os.path.join(BIN, "output", f'weight_{user["nickname"]}.json')
         if os.path.exists(old_file):
             shutil.copyfile(old_file, f"{old_file}BAK")
             with open(f"{old_file}BAK", "r", encoding="utf-8") as f:
