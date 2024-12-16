@@ -148,10 +148,10 @@ class WeightDataFetcher:
                 self.yunmai_token = True
                 return True
             else:
-                print("尝试使用账号密码登录...")
+                print("yunmai: 尝试使用账号密码登录...")
             return None
         else:
-            print("尝试使用账号密码登录...")
+            print("yunmai: 尝试使用账号密码登录...")
             return None
 
     def login(self):
@@ -502,9 +502,7 @@ class WeightDataFetcher:
             if isOnline == 1:
                 output_path = f"./static/result/{self.account}_weekly.html"
             else:
-                output_path = os.path.join(
-                    BIN, "output", f"weekly_report_{self.nickname}.html"
-                )
+                output_path = self.local_refresh_token_path
 
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(output)
