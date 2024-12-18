@@ -36,26 +36,28 @@ class SaveRefreshToken:
         self.nickname = nickname
         self.sign = sign
         self.refresh_token = refresh_token
-        self.local_refresh_token_path = os.path.join(
-            BIN, f"{self.nickname}_yunmai_token"
+        self.local_refresh_token_path = os.path.expanduser(
+            f"~/.yunmai/{self.nickname}_yunmai_token"
         )
 
-    def generate_key(self):
-        """根据 sign 生成 SHA256 哈希作为密钥"""
-        return hashlib.sha256(self.sign.encode()).digest()
+        # 确保目录存在
+        os.makedirs(os.path.dirname(self.local_refresh_token_path), exist_ok=True)
 
     def encrypt_data(self, data):
-        """加密 refresh_token"""
-        key = self.generate_key()
-        encrypted = "".join(chr(ord(c) ^ key[i % len(key)]) for i, c in enumerate(data))
-        return encrypted
+        """将输入的data进行Base64编码并返回字符串"""
+        # 将 data 转换为字节
+        data_bytes = data.encode("utf-8")
+        # 使用 base64 编码
+        encoded_bytes = base64.b64encode(data_bytes)
+        # 返回编码后的字符串
+        return encoded_bytes.decode("utf-8")
 
     def save_token(self):
         """保存加密后的 refresh_token 到本地文件"""
         encrypted_token = self.encrypt_data(self.refresh_token)
         try:
             with open(
-                os.path.join(BIN, "output", f"{self.nickname}_yunmai_token"),
+                self.local_refresh_token_path,
                 "w",
                 encoding="utf-8",
             ) as f:
@@ -87,12 +89,15 @@ class SaveRefreshToken:
             return token_data
 
     def decrypt_data(self, encrypted_data):
-        """解密 refresh_token"""
-        key = self.generate_key()
-        decrypted = "".join(
-            chr(ord(c) ^ key[i % len(key)]) for i, c in enumerate(encrypted_data)
-        )
-        return decrypted
+        """将encrypted_data进行Base64逆编码并还原"""
+        try:
+            # 使用 base64 解码
+            decoded_bytes = base64.b64decode(encrypted_data)
+            # 返回解码后的字符串
+            return decoded_bytes.decode("utf-8")
+        except (base64.binascii.Error, UnicodeDecodeError) as e:
+            # 处理 Base64 解码错误或字符串解码错误
+            raise ValueError("提供的数据无法解码为有效的字符串") from e
 
 
 class WeightDataFetcher:
@@ -138,7 +143,7 @@ class WeightDataFetcher:
 
             print("正在使用本地 refresh token 获取数据...")
             local_refresh_token = SaveRefreshToken(
-                self.refresh_token, self.nickname, f"{self.account}{self.password}"
+                self.refresh_token, self.nickname, f"{self.account}"
             )
             local_data = local_refresh_token.load_token()
             # print("local_data:", local_data)
@@ -238,7 +243,6 @@ class WeightDataFetcher:
         self.weight_data = weight_data
         # 保存token到本地文件
         token_data = {
-            "phone": self.account,
             "refresh_token": self.refresh_token,
             "user_id": self.user_id_real,
             "timestamp": int(time.time()),
@@ -246,7 +250,7 @@ class WeightDataFetcher:
         # print("token_data:", token_data)
         if not self.yunmai_token:
             local_refresh_token = SaveRefreshToken(
-                json.dumps(token_data), self.nickname, f"{self.account}{self.password}"
+                json.dumps(token_data), self.nickname, f"{self.account}"
             )
             local_refresh_token.save_token()
         return weight_data
@@ -502,7 +506,7 @@ class WeightDataFetcher:
             if isOnline == 1:
                 output_path = f"./static/result/{self.account}_weekly.html"
             else:
-                output_path = self.local_refresh_token_path
+                output_path = f"./output/weekly_report_{self.nickname}.html"
 
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(output)
@@ -567,3 +571,10 @@ class WeightDataFetcher:
             print(f"已生成{self.nickname} {year}年第{week-1}周的周报数据")
         else:
             print(f"无法获取{self.nickname} {year}年第{week-1}周的周报数据")
+
+
+# local
+"payload: code=1734511000&refreshToken=618b04ab892a4947908090f6efb7b0ef&sign=60b3c003edad7d045d7a9d24c161775a&signVersion=3&versionCode=2"
+
+# login
+"payload: code=1734511000&refreshToken=668b04ab892a4947908090f6efb7b0ef&sign=8e7437968d434d3ef7188de62c30172c&signVersion=3&versionCode=2"
