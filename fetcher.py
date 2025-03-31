@@ -571,10 +571,3 @@ class WeightDataFetcher:
             print(f"已生成{self.nickname} {year}年第{week-1}周的周报数据")
         else:
             print(f"无法获取{self.nickname} {year}年第{week-1}周的周报数据")
-
-
-# local
-"payload: code=1734511000&refreshToken=618b04ab892a4947908090f6efb7b0ef&sign=60b3c003edad7d045d7a9d24c161775a&signVersion=3&versionCode=2"
-
-# login
-"payload: code=1734511000&refreshToken=668b04ab892a4947908090f6efb7b0ef&sign=8e7437968d434d3ef7188de62c30172c&signVersion=3&versionCode=2"
