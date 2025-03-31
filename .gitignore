@@ -1,5 +1,6 @@
 run.sh
 static/result/*
 !static/result/.gitkeep
-__pycache__/*
+__pycache__/
+*.pyc
 sync_weightBAK.py
