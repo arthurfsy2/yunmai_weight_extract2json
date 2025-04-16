@@ -21,7 +21,7 @@ jobs:
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u arthurfsy2 --password-stdin
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag arthurfsy2/yunmai_weight_extract2json:$(date +%s)
+        run: docker build . --file Dockerfile --tag arthurfsy2/yunmai_weight_extract2json:latest
 
       - name: Push the Docker image
-        run: docker push arthurfsy2/yunmai_weight_extract2json:$(date +%s)
+        run: docker push arthurfsy2/yunmai_weight_extract2json:latest
