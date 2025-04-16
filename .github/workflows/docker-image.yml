@@ -1,0 +1,26 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u arthurfsy2 --password-stdin
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag arthurfsy2/yunmai_weight_extract2json:$(date +%s)
+
+      - name: Push the Docker image
+        run: docker push arthurfsy2/yunmai_weight_extract2json:$(date +%s)
