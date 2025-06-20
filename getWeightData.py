@@ -12,6 +12,7 @@ from dateutil.relativedelta import relativedelta
 from jinja2 import Template
 from fetcher import WeightDataFetcher
 from getUserReport import get_user_report
+from concurrent.futures import ThreadPoolExecutor
 
 BIN = os.path.dirname(os.path.realpath(__file__))
 
@@ -129,6 +130,34 @@ def save_html_report(nickname, template, report_content, output_file_path):
         file.write(html_content)
 
 
+def process_user(user):
+    old_file = os.path.join(BIN, "output", f'weight_{user["nickname"]}.json')
+    if os.path.exists(old_file):
+        shutil.copyfile(old_file, f"{old_file}BAK")
+        with open(f"{old_file}BAK", "r", encoding="utf-8") as f:
+            data_old = json.load(f)
+            local_list = [item["timeStamp"] for item in data_old]
+    else:
+        local_list = []
+
+    getUserInfo(
+        user["account"],
+        user["password"],
+        user["nickname"],
+        float(user["height"]),
+        user["garmin_account"],
+        user["garmin_password"],
+        isOnline,
+        local_list,
+    )
+
+    if isOnline == 1:
+        zipUserFile(user["account"], "./static/result")
+
+    if os.path.exists(f"{old_file}BAK"):
+        os.remove(f"{old_file}BAK")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -144,26 +173,5 @@ if __name__ == "__main__":
 
     users = parse_string(input_string)
     # print(users)
-    for user in users:
-        old_file = os.path.join(BIN, "output", f'weight_{user["nickname"]}.json')
-        if os.path.exists(old_file):
-            shutil.copyfile(old_file, f"{old_file}BAK")
-            with open(f"{old_file}BAK", "r", encoding="utf-8") as f:
-                data_old = json.load(f)
-                local_list = [item["timeStamp"] for item in data_old]
-        else:
-            local_list = []
-        getUserInfo(
-            user["account"],
-            user["password"],
-            user["nickname"],
-            float(user["height"]),
-            user["garmin_account"],
-            user["garmin_password"],
-            isOnline,
-            local_list,
-        )
-        if isOnline == 1:
-            zipUserFile(user["account"], "./static/result")
-        if os.path.exists(f"{old_file}BAK"):
-            os.remove(f"{old_file}BAK")
+    with ThreadPoolExecutor() as executor:
+        executor.map(process_user, users)

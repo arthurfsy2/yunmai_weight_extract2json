@@ -329,6 +329,7 @@ class WeightDataFetcher:
         )
         from datetime import datetime, timezone, timedelta
 
+        garmin_client = self.garmin_login(email, password)
         for item in data:
             createTime = item.get("createTime")
             timestamp = item.get("timeStamp")
@@ -360,7 +361,7 @@ class WeightDataFetcher:
             # ) as err:
             #     print("佳明（cn）登陆失败: %s" % err)
             #     quit()
-            garmin_client = self.garmin_login(email, password)
+
             garmin_client.add_body_composition(
                 timestamp=iso_timestamp,
                 weight=weight,
