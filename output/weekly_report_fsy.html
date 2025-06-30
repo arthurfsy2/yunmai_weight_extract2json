@@ -34,17 +34,17 @@
 <body>
     <div class="container">
         <h1 class="header">fsy 体重周报</h1>
-        <h3 class="header">2025/06/16~2025/06/22</h3>
+        <h3 class="header">2025/06/23~2025/06/29</h3>
         <div class="weight-summary">
             <div class="weight-container">
                 <h2>本周最终体重</h2>
-                <p>76.63 公斤</p>
+                <p>76.31 公斤</p>
             </div>
             <div class="weight-container">
                 <h2>与上周相比</h2>
                 <p>
                     
-                        <span class="down-arrow">↓</span> <span class="weight-value">0.19公斤</span>
+                        <span class="down-arrow">↓</span> <span class="weight-value">0.32公斤</span>
                     
                     
                 </p>                
@@ -64,17 +64,17 @@
                 <tr>
                     <td>BMI</td>
                     <td>23.4</td>
-                    <td>23.4</td>
+                    <td>23.3</td>
                     <td>
                         
-                            -
+                            <span class="down-arrow">↓</span> <span class="weight-value">0.1</span>
                         
                     </td>                    
                 </tr>
                 <tr>
                     <td>脂肪(%)</td>
-                    <td>19.6</td>
                     <td>19.5</td>
+                    <td>19.4</td>
                     <td>
                         
                             <span class="down-arrow">↓</span> <span class="weight-value">0.1</span>
@@ -84,20 +84,20 @@
                 <tr>
                     <td>肌肉(%)</td>
                     <td>53.9</td>
-                    <td>53.9</td>
+                    <td>54.0</td>
                     <td>
                         
-                            -
+                            <span class="up-arrow">↑</span> <span class="weight-value">0.1</span>
                         
                     </td>
                 </tr>
                 <tr>
                     <td>水分(%)</td>
                     <td>58.4</td>
-                    <td>58.4</td>
+                    <td>58.5</td>
                     <td>
                         
-                            -
+                            <span class="up-arrow">↑</span> <span class="weight-value">0.1</span>
                         
                     </td>
                 </tr>
@@ -113,11 +113,11 @@
                 </tr>
                 <tr>
                     <td>基础代谢率</td>
-                    <td>1704.0</td>
                     <td>1702.0</td>
+                    <td>1698.0</td>
                     <td>
                         
-                            <span class="down-arrow">↓</span> <span class="weight-value">2.0</span>
+                            <span class="down-arrow">↓</span> <span class="weight-value">4.0</span>
                         
                     </td>
                 </tr>
@@ -131,7 +131,7 @@
         var fsymyChart = echarts.init(fsychartDom);
         
         // 提取体重数据
-        var fsyweightData = [75.96, 76.57, 77.32, 76.39, 76.45, 76.15, 76.63];
+        var fsyweightData = [76.94, 76.5, 76.56, 76.19, 76.31];
         
         // 动态设置 y 轴的最小值和最大值
         var fsyminWeight = Math.min(...fsyweightData) - 1;
