@@ -1,6 +1,6 @@
 Flask==3.1.1
 garminconnect==0.2.28
-garth==0.5.16
+garth==0.5.17
 Jinja2==3.1.6
 pycryptodome==3.23.0
 python_dateutil==2.9.0.post0
