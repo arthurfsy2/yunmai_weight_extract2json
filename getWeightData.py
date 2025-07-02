@@ -131,14 +131,12 @@ def save_html_report(nickname, template, report_content, output_file_path):
 
 
 def process_user(user):
+    local_list = []
     old_file = os.path.join(BIN, "output", f'weight_{user["nickname"]}.json')
     if os.path.exists(old_file):
-        shutil.copyfile(old_file, f"{old_file}BAK")
-        with open(f"{old_file}BAK", "r", encoding="utf-8") as f:
+        with open(old_file, "r", encoding="utf-8") as f:
             data_old = json.load(f)
             local_list = [item["timeStamp"] for item in data_old]
-    else:
-        local_list = []
 
     getUserInfo(
         user["account"],
@@ -153,9 +151,6 @@ def process_user(user):
 
     if isOnline == 1:
         zipUserFile(user["account"], "./static/result")
-
-    if os.path.exists(f"{old_file}BAK"):
-        os.remove(f"{old_file}BAK")
 
 
 if __name__ == "__main__":

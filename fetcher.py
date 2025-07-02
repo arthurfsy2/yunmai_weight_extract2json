@@ -153,10 +153,10 @@ class WeightDataFetcher:
                 self.yunmai_token = True
                 return True
             else:
-                print("yunmai: 尝试使用账号密码登录...")
+                print(f"yunmai: 尝试使用账号密码登录{self.nickname}...")
             return None
         else:
-            print("yunmai: 尝试使用账号密码登录...")
+            print(f"yunmai: 尝试使用账号密码登录{self.nickname}...")
             return None
 
     def login(self):
