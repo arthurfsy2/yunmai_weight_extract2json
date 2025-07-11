@@ -27,8 +27,23 @@
 
 单个举例：`python getWeightData.py "186XXXXX123/12xxx4/nickname1/1.8"`
 
-> 如果需要同步体重到佳明（cn），可在参数最后添加佳明的账号密码，如“你的手机号/密码/自定义的昵称/身高（米）/佳明账号/佳明密码”
-> 单个举例：`python getWeightData.py "186XXXXX123/12xxx4/nickname1/1.8/arxxxxy/XXXXX"`
+> 如果需要同步体重到佳明（cn），可在参数最后添加佳明的账号密码，如“你的手机号/密码/自定义的昵称/身高（米）/佳明密钥”
+
+> 获取佳明 CN 的密钥
+
+在终端中输入以下命令
+
+`python get_garmin_secret.py ${your email} ${your password} --is-cn`
+
+> 获取佳明全球的密钥
+
+在终端中输入以下命令
+
+`python get_garmin_secret.py ${your email} ${your password}`
+
+此时会在终端打印出密钥，需要复制并粘贴
+
+> 单个举例：`python getWeightData.py "186XXXXX123/12xxx4/nickname1/1.8/XXXXX"`
 
 如果账号、密码无误的话，当 getWeightData.py 正常运行后，会在当前生成 `weight_自定义昵称.json`，记录了该账号的体重信息。如果输入了多个账号的信息，则批量生成 `weight_自定义昵称.json` 文件
 
@@ -58,7 +73,8 @@ on:
 2. 为 GitHub Actions 添加代码提交权限 访问 repo Settings > Actions > General 页面，找到 Workflow permissions 的设置项，将选项配置为 Read and write permissions，支持 CI 将运动数据更新后提交到仓库中。
    **不设置允许的话，会导致 workflows 无法写入文件**
 3. 在 repo Settings > Security > Secrets > secrets and variables > Actions > New repository secret > 增加:
-   name 填写为：account，Secret 填写为：“你的手机号/密码/自定义的昵称/身高（米）/佳明账号(非必填)/佳明密码(非必填)”（不需要双引号），如 `186XXXXX123/12xxx4/nickname1/1.8/garmin_account(非必填)/garmin_password(非必填)`
+   
+   name 填写为：account，Secret 填写为：“你的手机号/密码/自定义的昵称/身高（米）/佳明密钥”（不需要双引号），如 `186XXXXX123/12xxx4/nickname1/1.8/garmin_refresh_token(非必填)`
    ![img](/img/添加变量.png)
 
 # 使用方法

@@ -26,8 +26,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 import re
 
-tokenstore = "~/.garminconnect"
-tokenstore_base64 = "~/.garminconnect_base64"
 BIN = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -101,10 +99,11 @@ class SaveRefreshToken:
 
 
 class WeightDataFetcher:
-    def __init__(self, account, password, nickname):
+    def __init__(self, account, password, nickname, garmin_refresh_token=None):
         self.account = account
         self.password = password
         self.nickname = nickname
+        self.garmin_refresh_token = garmin_refresh_token
         self.refresh_token = None
         self.user_id_real = None
         self.access_token = None
@@ -255,48 +254,19 @@ class WeightDataFetcher:
             local_refresh_token.save_token()
         return weight_data
 
-    def garmin_login(self, email, password):
+    def garmin_login(self, garmin_refresh_token):
         try:
-            print(f"尝试使用本地garmin token数据 '{tokenstore}'...\n")
+            print(f"尝试使用refresh token 登录Garmin...\n")
             garmin = Garmin()
-            garmin.login(tokenstore)
+            garmin.login(garmin_refresh_token)
             print("佳明（cn）登陆成功！")
         except (FileNotFoundError, GarthHTTPError, GarminConnectAuthenticationError):
-            # Session is expired. You'll need to log in again
-            print(
-                "Login tokens not present, login with your Garmin Connect credentials to generate them.\n"
-                f"They will be stored in '{tokenstore}' for future use.\n"
-            )
-            try:
-                # Ask for credentials if not set as environment variables
-
-                garmin = Garmin(email=email, password=password, is_cn=True)
-                garmin.login()
-                # Save Oauth1 and Oauth2 token files to directory for next login
-                garmin.garth.dump(tokenstore)
-                print(
-                    f"Oauth tokens stored in '{tokenstore}' directory for future use. (first method)\n"
-                )
-                # Encode Oauth1 and Oauth2 tokens to base64 string and safe to file for next login (alternative way)
-                token_base64 = garmin.garth.dumps()
-                dir_path = os.path.expanduser(tokenstore_base64)
-                with open(dir_path, "w") as token_file:
-                    token_file.write(token_base64)
-                print(
-                    f"Oauth tokens encoded as base64 string and saved to '{dir_path}' file for future use. (second method)\n"
-                )
-            except (
-                FileNotFoundError,
-                GarthHTTPError,
-                GarminConnectAuthenticationError,
-                requests.exceptions.HTTPError,
-            ) as err:
-                logger.error(err)
-                return None
+            print("Garmin 的refresh token无效！")
+            sys.exit(0)
 
         return garmin
 
-    def upload_to_garmin(self, email, password, data):
+    def upload_to_garmin(self, garmin_refresh_token, data):
         def get_physique_type(bmi, body_fat):
             if bmi < 18.5 and body_fat < 10:
                 return "7"
@@ -329,7 +299,7 @@ class WeightDataFetcher:
         )
         from datetime import datetime, timezone, timedelta
 
-        garmin_client = self.garmin_login(email, password)
+        garmin_client = self.garmin_login(garmin_refresh_token)
         for item in data:
             createTime = item.get("createTime")
             timestamp = item.get("timeStamp")

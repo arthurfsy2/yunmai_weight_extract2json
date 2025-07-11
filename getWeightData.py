@@ -6,7 +6,6 @@ import sys
 import zipfile
 import os
 import re
-import shutil, operator
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from jinja2 import Template
@@ -22,8 +21,7 @@ def getUserInfo(
     password,
     nickname,
     height,
-    garmin_account,
-    garmin_password,
+    garmin_refresh_token,
     isOnline,
     local_list,
 ):
@@ -40,9 +38,9 @@ def getUserInfo(
             item for item in weight_data if item["timeStamp"] not in local_list
         ]
     # print("filtered_data:", filtered_data)
-    if garmin_account and garmin_password:
+    if garmin_refresh_token:
         if filtered_data:
-            fetcher.upload_to_garmin(garmin_account, garmin_password, filtered_data)
+            fetcher.upload_to_garmin(garmin_refresh_token, filtered_data)
         else:
             print("garmin已是最新体重记录")
     get_user_report(weight_data, account, nickname, height, isOnline)
@@ -56,7 +54,7 @@ def parse_string(input_string):
             account, password, nickname, height, *garmin_info = group.split("/")
         except Exception:
             print(
-                "请检查以下内容是否有误：'用户名/密码/昵称/身高（米）/佳明账号（可选）/佳明密码（可选）'"
+                "请检查以下内容是否有误：'用户名/密码/昵称/身高（米）/佳明refresh token'"
             )
             sys.exit()
         account = account.strip()
@@ -64,12 +62,11 @@ def parse_string(input_string):
         nickname = nickname.strip()
         height = height.strip()
 
-        if len(garmin_info) == 2:
-            garmin_account = garmin_info[0].strip()
-            garmin_password = garmin_info[1].strip()
+        if len(garmin_info) == 1:
+            garmin_refresh_token = garmin_info[0].strip()
+
         else:
-            garmin_account = ""
-            garmin_password = ""
+            garmin_refresh_token = None
 
         arr.append(
             {
@@ -77,8 +74,7 @@ def parse_string(input_string):
                 "password": password,
                 "nickname": nickname,
                 "height": height,
-                "garmin_account": garmin_account,
-                "garmin_password": garmin_password,
+                "garmin_refresh_token": garmin_refresh_token,
             }
         )
     return arr
@@ -143,8 +139,7 @@ def process_user(user):
         user["password"],
         user["nickname"],
         float(user["height"]),
-        user["garmin_account"],
-        user["garmin_password"],
+        user["garmin_refresh_token"],
         isOnline,
         local_list,
     )
@@ -157,7 +152,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "input_string",
-        help="输入:'用户名/密码/昵称/身高（米）/佳明账号（可选）/佳明密码（可选）'",
+        help="输入:'用户名/密码/昵称/身高（米）/佳明refresh token'",
     )
     parser.add_argument(
         "--isOnline", help="check if created by online", type=int, default=0
