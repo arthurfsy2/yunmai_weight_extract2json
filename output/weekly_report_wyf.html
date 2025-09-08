@@ -34,17 +34,17 @@
 <body>
     <div class="container">
         <h1 class="header">wyf 体重周报</h1>
-        <h3 class="header">2025/08/25~2025/08/31</h3>
+        <h3 class="header">2025/09/01~2025/09/07</h3>
         <div class="weight-summary">
             <div class="weight-container">
                 <h2>本周最终体重</h2>
-                <p>71.71 公斤</p>
+                <p>72.4 公斤</p>
             </div>
             <div class="weight-container">
                 <h2>与上周相比</h2>
                 <p>
                     
-                        <span class="up-arrow">↑</span> <span class="weight-value">0.18公斤</span>
+                        <span class="up-arrow">↑</span> <span class="weight-value">0.69公斤</span>
                     
                     
                 </p>                
@@ -64,40 +64,40 @@
                 <tr>
                     <td>BMI</td>
                     <td>24.8</td>
-                    <td>24.8</td>
+                    <td>25.1</td>
                     <td>
                         
-                            -
+                            <span class="up-arrow">↑</span> <span class="weight-value">0.3</span>
                         
                     </td>                    
                 </tr>
                 <tr>
                     <td>脂肪(%)</td>
-                    <td>32.1</td>
                     <td>32.2</td>
+                    <td>32.6</td>
                     <td>
                         
-                            <span class="up-arrow">↑</span> <span class="weight-value">0.1</span>
+                            <span class="up-arrow">↑</span> <span class="weight-value">0.4</span>
                         
                     </td>
                 </tr>
                 <tr>
                     <td>肌肉(%)</td>
-                    <td>45.49</td>
                     <td>45.43</td>
+                    <td>45.16</td>
                     <td>
                         
-                            <span class="down-arrow">↓</span> <span class="weight-value">0.06</span>
+                            <span class="down-arrow">↓</span> <span class="weight-value">0.27</span>
                         
                     </td>
                 </tr>
                 <tr>
                     <td>水分(%)</td>
-                    <td>49.3</td>
                     <td>49.2</td>
+                    <td>48.9</td>
                     <td>
                         
-                            <span class="down-arrow">↓</span> <span class="weight-value">0.1</span>
+                            <span class="down-arrow">↓</span> <span class="weight-value">0.3</span>
                         
                     </td>
                 </tr>
@@ -113,11 +113,11 @@
                 </tr>
                 <tr>
                     <td>基础代谢率</td>
-                    <td>1419.1</td>
                     <td>1420.2</td>
+                    <td>1424.0</td>
                     <td>
                         
-                            <span class="up-arrow">↑</span> <span class="weight-value">1.1</span>
+                            <span class="up-arrow">↑</span> <span class="weight-value">3.8</span>
                         
                     </td>
                 </tr>
@@ -131,7 +131,7 @@
         var wyfmyChart = echarts.init(wyfchartDom);
         
         // 提取体重数据
-        var wyfweightData = [71.64, 72.14, 72.24, 71.37, 71.71];
+        var wyfweightData = [72.31, 72.45, 73.04, 71.61, 71.51, 72.4];
         
         // 动态设置 y 轴的最小值和最大值
         var wyfminWeight = Math.min(...wyfweightData) - 1;
