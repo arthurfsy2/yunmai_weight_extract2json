@@ -30,10 +30,29 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: 缓存体重数据    
+        uses: actions/cache@v2    
+        with:    
+          path: ~/.yunmai  
+          key: ${{ runner.os }}-yunmai-token-${{ github.actor }}
+          
+      - name: 使用缓存的体重数据      
+        run: |       
+          if [ -d ~/.yunmai ]; then  # 检查目录是否存在  
+            echo "Data directory found, listing files:"   
+            # 使用 ls 列出文件名，仅显示名称
+            for file in ~/.yunmai/*; do
+              if [ -f "$file" ]; then  # 如果是文件
+                echo "$(basename "$file")"  # 只显示文件名
+              fi
+            done
+          else    
+            echo "Data directory not found!"     
+          fi
       - name: 获取体重数据
         run: |
-          python getWeightData.py ${{ secrets.ACCOUNT }} 
-
+          mkdir -p ~/.yunmai
+          python getWeightData.py ${{ secrets.ACCOUNT }}
       - name: 提交
         run: |
           current_time=$(date +'%Y-%m-%d %H:%M:%S %Z') # 获取当前时间并转换为中国时区时间

@@ -60,6 +60,7 @@ class SaveRefreshToken:
                 encoding="utf-8",
             ) as f:
                 f.write(encrypted_token)  # 写入加密后的字符串
+            print("token已保存到本地：", self.local_refresh_token_path)
         except Exception as e:
             print(f"保存 token 失败: {str(e)}")
 
@@ -109,8 +110,8 @@ class WeightDataFetcher:
         self.access_token = None
         self.yunmai_token = None
         self.weight_data = []
-        self.local_refresh_token_path = os.path.join(
-            BIN, f"{self.nickname}_yunmai_token"
+        self.local_refresh_token_path = os.path.expanduser(
+            f"~/.yunmai/{self.nickname}_yunmai_token"
         )
 
     @staticmethod
