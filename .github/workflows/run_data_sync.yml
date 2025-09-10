@@ -31,7 +31,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: 缓存体重数据    
-        uses: actions/cache@v2    
+        uses: actions/cache@v4    
         with:    
           path: ~/.yunmai  
           key: ${{ runner.os }}-yunmai-token-${{ github.actor }}
