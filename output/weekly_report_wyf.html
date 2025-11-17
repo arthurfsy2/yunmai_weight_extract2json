@@ -34,11 +34,11 @@
 <body>
     <div class="container">
         <h1 class="header">wyf 体重周报</h1>
-        <h3 class="header">2025/10/20~2025/10/26</h3>
+        <h3 class="header">2025/11/10~2025/11/16</h3>
         <div class="weight-summary">
             <div class="weight-container">
                 <h2>本周最终体重</h2>
-                <p>77.64 公斤</p>
+                <p>78.26 公斤</p>
             </div>
             <div class="weight-container">
                 <h2>与上周相比</h2>
@@ -64,7 +64,7 @@
                 <tr>
                     <td>BMI</td>
                     <td>-</td>
-                    <td>26.9</td>
+                    <td>27.1</td>
                     <td>
                         
                             -
@@ -74,7 +74,7 @@
                 <tr>
                     <td>脂肪(%)</td>
                     <td>-</td>
-                    <td>20.0</td>
+                    <td>20.3</td>
                     <td>
                         
                             -
@@ -84,7 +84,7 @@
                 <tr>
                     <td>肌肉(%)</td>
                     <td>-</td>
-                    <td>53.6</td>
+                    <td>53.4</td>
                     <td>
                         
                             -
@@ -94,7 +94,7 @@
                 <tr>
                     <td>水分(%)</td>
                     <td>-</td>
-                    <td>58.1</td>
+                    <td>57.9</td>
                     <td>
                         
                             -
@@ -114,7 +114,7 @@
                 <tr>
                     <td>基础代谢率</td>
                     <td>-</td>
-                    <td>1711.6</td>
+                    <td>1717.0</td>
                     <td>
                         
                             -
@@ -131,7 +131,7 @@
         var wyfmyChart = echarts.init(wyfchartDom);
         
         // 提取体重数据
-        var wyfweightData = [77.42, 77.55, 76.96, 77.4, 77.92, 77.64];
+        var wyfweightData = [79.0, 79.0, 78.75, 78.53, 79.02, 79.13, 78.26];
         
         // 动态设置 y 轴的最小值和最大值
         var wyfminWeight = Math.min(...wyfweightData) - 1;
