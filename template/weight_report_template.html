@@ -4,19 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{nickname}} 体重数据统计</title>
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.1/css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.1/css/bootstrap.min.css"
+    />
     <style>
-        * {
-          margin: 0;
-          padding: 0;
-        }
-  
-        #chart-container {
-          position: relative;
-          height: 100vh;
-          overflow: hidden;
-        }
-      </style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      #chart-container {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+      }
+    </style>
   </head>
   <body>
     <div class="container-fluid">
@@ -140,7 +143,12 @@
             symbol: "none",
             smooth: true,
             data: {{weight}},
-
+            markPoint: {
+              data: [
+                { type: 'max', name: 'Max' },
+                { type: 'min', name: 'Min' }
+              ]
+            },
             markLine: {
               silent: false,
               lineStyle: {
