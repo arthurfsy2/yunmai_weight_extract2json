@@ -1,0 +1,19 @@
+name: 清理 Workflow Runs
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'  # 每周日凌晨3点
+  workflow_dispatch:
+
+jobs:
+  delete-workflow-runs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 删除旧的 workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          # 保留最近的数量
+          retain_days: 7
+          
